@@ -140,7 +140,7 @@ export const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col justify-between overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 px-3 py-2 gap-2 select-none relative transition-colors duration-200">
+    <div className="h-full w-full flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 px-3 py-1.5 md:py-2 gap-1.5 md:gap-2 select-none relative transition-colors duration-200">
       
       {/* Toast Notification */}
       {toastMessage && (
@@ -343,19 +343,19 @@ export const DashboardPage: React.FC = () => {
       </header>
 
       {/* 2. Grid Responsif */}
-      <main className="flex-1 min-h-0 flex flex-col md:grid md:grid-cols-12 gap-1.5 overflow-hidden">
+      <main className="flex-1 min-h-0 flex flex-col md:grid md:grid-cols-12 gap-2 overflow-hidden">
         
         {/* === KOLOM KIRI === */}
-        <section className="flex-1 flex flex-col justify-between gap-1.5 md:col-span-5 lg:col-span-5 min-h-0">
+        <section className="flex-none md:flex-1 flex flex-col md:justify-between gap-2 md:col-span-5 lg:col-span-5 min-h-0">
           
           {/* Banner Target Penjualan */}
-          <div className="flex-none bg-gradient-to-r from-blue-700 to-blue-800 rounded-xl py-3 px-4 shadow-sm">
+          <div className="flex-none bg-gradient-to-r from-blue-700 to-blue-800 rounded-xl p-3.5 shadow-sm">
             <div className="flex justify-between items-start">
               <div className="flex flex-col">
                 <span className="text-[10px] md:text-xs font-normal uppercase tracking-wider !text-blue-100 leading-none">
                   PENJUALAN HARI INI
                 </span>
-                <h2 className="text-2xl md:text-3xl font-medium mt-0.5 tracking-tight !text-white leading-tight">
+                <h2 className="text-xl md:text-3xl font-medium mt-0.5 tracking-tight !text-white leading-tight tabular-nums">
                   RP 2.450.000
                 </h2>
               </div>
@@ -365,7 +365,7 @@ export const DashboardPage: React.FC = () => {
             </div>
             
             {/* Mini Bar Chart Sparkline */}
-            <div className="h-10 flex items-end justify-between gap-1 px-1 my-1.5">
+            <div className="h-8 md:h-10 flex items-end justify-between gap-1 px-1 my-1">
               {[40, 65, 55, 80, 70, 95, 82].map((val, idx) => (
                 <div key={idx} className="flex-1 flex flex-col items-center gap-0.5">
                   <div 
@@ -394,7 +394,7 @@ export const DashboardPage: React.FC = () => {
               <div className="w-5 h-5 md:w-7 md:h-7 mx-auto rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-0.5">
                 <BanknotesIcon className="w-4 h-4" />
               </div>
-              <p className="text-xs md:text-sm font-semibold text-slate-800 dark:text-slate-100 leading-tight">Rp 1.450k</p>
+              <p className="text-xs md:text-sm font-semibold text-slate-800 dark:text-slate-100 leading-tight tabular-nums">Rp 1.450k</p>
               <p className="text-[9px] md:text-[10px] font-medium text-slate-400">KAS TUNAI</p>
             </div>
 
@@ -402,7 +402,7 @@ export const DashboardPage: React.FC = () => {
               <div className="w-5 h-5 md:w-7 md:h-7 mx-auto rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-0.5">
                 <QrCodeIcon className="w-4 h-4" />
               </div>
-              <p className="text-xs md:text-sm font-semibold text-slate-800 dark:text-slate-100 leading-tight">Rp 1.000k</p>
+              <p className="text-xs md:text-sm font-semibold text-slate-800 dark:text-slate-100 leading-tight tabular-nums">Rp 1.000k</p>
               <p className="text-[9px] md:text-[10px] font-medium text-slate-400">QRIS</p>
             </div>
 
@@ -410,7 +410,7 @@ export const DashboardPage: React.FC = () => {
               <div className="w-5 h-5 md:w-7 md:h-7 mx-auto rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-0.5">
                 <ReceiptPercentIcon className="w-4 h-4" />
               </div>
-              <p className="text-xs md:text-sm font-semibold text-slate-800 dark:text-slate-100 leading-tight">24 Struk</p>
+              <p className="text-xs md:text-sm font-semibold text-slate-800 dark:text-slate-100 leading-tight tabular-nums">24 Struk</p>
               <p className="text-[9px] md:text-[10px] font-medium text-slate-400">TOTAL</p>
             </div>
           </div>
@@ -421,7 +421,7 @@ export const DashboardPage: React.FC = () => {
               navigator.vibrate?.(15);
               handleNav('/kasir');
             }}
-            className="flex-none w-full bg-orange-500 hover:bg-orange-600 active:scale-[0.98] transition-all duration-150 font-semibold !text-white text-xs md:text-sm py-2 md:py-3.5 rounded-xl shadow-sm shadow-orange-500/25 flex items-center justify-center gap-1.5 cursor-pointer"
+            className="flex-none w-full bg-orange-500 hover:bg-orange-600 active:scale-[0.98] transition-all duration-150 font-semibold !text-white text-xs md:text-sm py-2.5 md:py-3.5 rounded-xl shadow-sm shadow-orange-500/25 flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <PlusCircleIcon className="w-5 h-5" />
             <span className="tracking-wide">+ TRANSAKSI BARU (KASIR)</span>
@@ -429,11 +429,11 @@ export const DashboardPage: React.FC = () => {
         </section>
 
         {/* === KOLOM KANAN === */}
-        <section className="flex-1 min-h-0 flex flex-col justify-between gap-1.5 md:col-span-7 lg:col-span-7 overflow-hidden">
+        <section className="flex-1 min-h-0 flex flex-col justify-between gap-2 md:col-span-7 lg:col-span-7 overflow-hidden">
           
           {/* Menu Utama (6 Grid) */}
           <div className="flex-none">
-            <div className="flex justify-between items-center mb-0.5">
+            <div className="flex justify-between items-center mb-1">
               <h3 className="text-[10px] md:text-xs font-semibold text-slate-700 dark:text-slate-300 tracking-wider">MENU UTAMA</h3>
             </div>
             
@@ -463,8 +463,8 @@ export const DashboardPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Aktivitas Terakhir (flex-1 flex flex-col justify-between p-3 dengan item lega) */}
-          <div className="flex-1 flex flex-col justify-between bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-xl p-3 shadow-xs overflow-hidden transition-colors">
+          {/* Aktivitas Terakhir */}
+          <div className="flex-1 min-h-0 flex flex-col justify-between bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-xl p-2.5 md:p-3 shadow-xs overflow-hidden transition-colors">
             <div className="flex-none flex justify-between items-center pb-1 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-1.5">
                 <ClockIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -479,7 +479,7 @@ export const DashboardPage: React.FC = () => {
               </button>
             </div>
             
-            <div className="pt-1">
+            <div className="pt-1 flex-1 min-h-0 flex flex-col justify-center">
               {recentTransactions.slice(0, 1).map((tx) => (
                 <div
                   key={tx.id}
@@ -487,7 +487,7 @@ export const DashboardPage: React.FC = () => {
                     navigator.vibrate?.(15);
                     setSelectedTransaction(tx);
                   }}
-                  className="flex items-center justify-between bg-slate-50/90 dark:bg-slate-800/70 hover:bg-blue-50/80 dark:hover:bg-slate-800 py-2.5 px-3 rounded-lg border border-slate-100 dark:border-slate-700/80 dark:hover:border-blue-500/50 active:scale-[0.98] active:border-blue-400 transition-all cursor-pointer"
+                  className="flex items-center justify-between bg-slate-50/90 dark:bg-slate-800/70 hover:bg-blue-50/80 dark:hover:bg-slate-800 py-2 px-3 rounded-lg border border-slate-100 dark:border-slate-700/80 dark:hover:border-blue-500/50 active:scale-[0.98] active:border-blue-400 transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
                     <div className={`p-1.5 rounded-md ${tx.paymentMethod === 'TUNAI' ? 'bg-emerald-100/70 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400' : 'bg-blue-100/70 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400'}`}>

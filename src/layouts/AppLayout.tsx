@@ -43,7 +43,7 @@ export const AppLayout: React.FC = () => {
           <button
             type="button"
             onClick={openActivationModal}
-            className="flex-none w-full bg-amber-50 dark:bg-amber-950/70 hover:bg-amber-100/80 dark:hover:bg-amber-900/60 border-b border-amber-200/80 dark:border-amber-800/70 px-3 py-1 flex items-center justify-center gap-1.5 text-[10.5px] font-medium text-amber-800 dark:text-amber-300 transition-colors cursor-pointer"
+            className="flex-none shrink-0 w-full bg-amber-50 dark:bg-amber-950/70 hover:bg-amber-100/80 dark:hover:bg-amber-900/60 border-b border-amber-200/80 dark:border-amber-800/70 py-1 px-3 flex items-center justify-center gap-1.5 text-[11px] leading-tight font-medium text-amber-800 dark:text-amber-300 transition-colors cursor-pointer"
           >
             <KeyRound size={11} className="shrink-0 text-amber-600 dark:text-amber-400" />
             <span className="truncate tabular-nums">
@@ -54,7 +54,7 @@ export const AppLayout: React.FC = () => {
             </span>
           </button>
         )}
-        <div className="w-full flex-1 max-w-7xl mx-auto flex flex-col min-h-0 overflow-hidden">
+        <div className="w-full flex-1 min-h-0 max-w-7xl mx-auto flex flex-col overflow-hidden">
           <Outlet />
         </div>
       </main>
