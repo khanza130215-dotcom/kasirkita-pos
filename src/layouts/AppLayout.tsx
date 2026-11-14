@@ -7,10 +7,20 @@ import {
   ChartBarIcon,
   Bars3Icon,
 } from '@heroicons/react/24/outline';
+import { KeyRound } from 'lucide-react';
+import { useLicense } from '../context/LicenseContext';
+import { ActivationModal } from '../components/license/ActivationModal';
 
 export const AppLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const {
+    isActivated,
+    isDemoExpired,
+    maxDemoTransactions,
+    remainingTransactions,
+    openActivationModal,
+  } = useLicense();
 
   const navItems = [
     { label: 'BERANDA', path: '/', icon: HomeIcon },
@@ -29,10 +39,26 @@ export const AppLayout: React.FC = () => {
     <div className="w-full h-full flex flex-col md:flex-row overflow-hidden bg-slate-50 dark:bg-slate-950 select-none transition-colors duration-200">
       {/* Area Konten Utama */}
       <main className="order-1 md:order-2 flex-1 min-h-0 min-w-0 w-full overflow-hidden flex flex-col">
-        <div className="w-full h-full max-w-7xl mx-auto flex flex-col min-h-0 overflow-hidden">
+        {!isActivated && !isDemoExpired && (
+          <button
+            type="button"
+            onClick={openActivationModal}
+            className="flex-none w-full bg-amber-50 dark:bg-amber-950/70 hover:bg-amber-100/80 dark:hover:bg-amber-900/60 border-b border-amber-200/80 dark:border-amber-800/70 px-3 py-1 flex items-center justify-center gap-1.5 text-[10.5px] font-medium text-amber-800 dark:text-amber-300 transition-colors cursor-pointer"
+          >
+            <KeyRound size={11} className="shrink-0 text-amber-600 dark:text-amber-400" />
+            <span className="truncate tabular-nums">
+              Mode Demo (Sisa {remainingTransactions} dari {maxDemoTransactions} Transaksi) •{' '}
+              <span className="underline underline-offset-2 text-[#0866E9] dark:text-blue-400">
+                Aktivasi Sekarang
+              </span>
+            </span>
+          </button>
+        )}
+        <div className="w-full flex-1 max-w-7xl mx-auto flex flex-col min-h-0 overflow-hidden">
           <Outlet />
         </div>
       </main>
+      <ActivationModal />
 
       {/* Navigasi Adaptif: Bottom Bar di Mobile (< md), Left Navigation Rail (w-20) di Tablet & PC (md: ke atas) */}
       <nav className="order-2 md:order-1 flex-none w-full md:w-20 md:h-full bg-white dark:bg-slate-900 border-t md:border-t-0 md:border-r border-slate-200 dark:border-slate-800 px-2 py-1.5 md:px-1.5 md:py-4 z-40 flex flex-col justify-center md:justify-start md:items-center md:gap-4 transition-colors duration-200">

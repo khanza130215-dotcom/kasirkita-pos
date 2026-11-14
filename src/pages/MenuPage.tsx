@@ -13,7 +13,9 @@ import {
   FileSpreadsheet,
   Moon,
   Sun,
-  BookOpen
+  BookOpen,
+  KeyRound,
+  MessageCircle
 } from 'lucide-react';
 import { settingsService } from '../services/settingsService';
 import { shiftService } from '../services/shiftService';
@@ -22,6 +24,7 @@ import { Shift, StoreSettings } from '../types';
 import { ImportMasterModal } from '../components/products/ImportMasterModal';
 import { PWAInstallButton } from '../components/ui/PWAInstallButton';
 import { useTheme } from '../context/ThemeContext';
+import { useLicense } from '../context/LicenseContext';
 
 const getInitials = (name: string): string => {
   const words = name.trim().split(/\s+/).filter(Boolean);
@@ -39,6 +42,13 @@ const getShiftPeriodLabel = (openedAt: Date): string => {
 
 export const MenuPage: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
+  const {
+    deviceId,
+    isActivated,
+    maxDemoTransactions,
+    remainingTransactions,
+    openActivationModal,
+  } = useLicense();
   const [settings, setSettings] = useState<StoreSettings | null>(null);
   const [activeShift, setActiveShift] = useState<Shift | null>(null);
   const [todayExpenseTotal, setTodayExpenseTotal] = useState<number>(0);
@@ -120,8 +130,12 @@ export const MenuPage: React.FC = () => {
       })} WIB`
     : 'Ketuk untuk buka kas';
 
+  const developerWaHref = `https://wa.me/6281113900923?text=${encodeURIComponent(
+    `Halo Developer KasirKita, saya ingin konsultasi / membeli Kode Aktivasi Lisensi. ID Perangkat saya: ${deviceId}`
+  )}`;
+
   return (
-    <div className="h-full w-full flex flex-col justify-start overflow-hidden px-3 py-1.5 md:py-2 gap-1.5 md:gap-2.5 bg-slate-50 dark:bg-slate-950 select-none relative transition-colors duration-200">
+    <div className="h-full w-full flex flex-col justify-start overflow-hidden px-3 py-1 md:py-2 gap-1 md:gap-2 bg-slate-50 dark:bg-slate-950 select-none relative transition-colors duration-200">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-slate-900 dark:bg-slate-800 text-white text-xs font-normal px-4 py-2 rounded-xl shadow-xl border border-slate-700/50 flex items-center gap-2">
@@ -131,16 +145,16 @@ export const MenuPage: React.FC = () => {
       )}
 
       {/* 1. Header Toko Ringkas & Dinamis + Sync Terintegrasi */}
-      <div className="flex-none bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500/50 active:scale-[0.98] transition-all shadow-xs rounded-2xl p-2 md:p-2.5 flex flex-col gap-1.5 md:gap-2">
+      <div className="flex-none bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500/50 active:scale-[0.98] transition-all shadow-xs rounded-2xl p-2 md:p-2.5 flex flex-col gap-1 md:gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
           {storeLogo ? (
             <img
               src={storeLogo}
               alt={storeName}
-              className="w-9 h-9 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+              className="w-8 h-8 md:w-9 md:h-9 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
             />
           ) : (
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#0866E9] to-blue-500 text-white font-medium text-xs flex items-center justify-center shadow-xs shrink-0">
+            <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-tr from-[#0866E9] to-blue-500 text-white font-medium text-xs flex items-center justify-center shadow-xs shrink-0">
               {initials}
             </div>
           )}
@@ -153,13 +167,13 @@ export const MenuPage: React.FC = () => {
                 Kasir Aktif
               </span>
             </div>
-            <p className="text-[10.5px] font-normal text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+            <p className="text-[10px] font-normal text-slate-500 dark:text-slate-400 mt-0.5 truncate">
               {storeAddress} • POS v4.0
             </p>
           </div>
         </div>
 
-        <div className="border-t border-slate-200/80 dark:border-slate-800 pt-1.5 md:pt-2 flex items-center justify-between gap-2">
+        <div className="border-t border-slate-200/80 dark:border-slate-800 pt-1 md:pt-1.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 min-w-0">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
             <p className="text-[10px] font-normal text-slate-500 dark:text-slate-400 truncate">
@@ -186,15 +200,15 @@ export const MenuPage: React.FC = () => {
         <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1 block mb-1">
           Operasional Toko
         </span>
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-2 gap-2">
           <Link
             to="/shift"
             onClick={() => navigator.vibrate?.(15)}
             className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-slate-800/80 active:scale-[0.98] transition-all shadow-xs rounded-2xl p-2 md:p-2.5 flex flex-col justify-between gap-1 min-w-0"
           >
             <div className="flex items-center justify-between gap-1">
-              <div className="w-7 h-7 md:w-8 md:h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-200/70 dark:border-emerald-800/70 shrink-0">
-                <UserCircle size={16} />
+              <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-200/70 dark:border-emerald-800/70 shrink-0">
+                <UserCircle size={15} />
               </div>
               <span
                 className={`text-[9px] font-medium px-1.5 py-0.5 rounded-md border truncate ${
@@ -231,8 +245,8 @@ export const MenuPage: React.FC = () => {
             className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-slate-800/80 active:scale-[0.98] transition-all shadow-xs rounded-2xl p-2 md:p-2.5 flex flex-col justify-between gap-1 min-w-0"
           >
             <div className="flex items-center justify-between gap-1">
-              <div className="w-7 h-7 md:w-8 md:h-8 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-500 dark:text-rose-400 flex items-center justify-center border border-rose-200/70 dark:border-rose-800/70 shrink-0">
-                <ShieldAlert size={16} />
+              <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-500 dark:text-rose-400 flex items-center justify-center border border-rose-200/70 dark:border-rose-800/70 shrink-0">
+                <ShieldAlert size={15} />
               </div>
               <span
                 className={`text-[9px] font-medium px-1.5 py-0.5 rounded-md border truncate ${
@@ -276,7 +290,7 @@ export const MenuPage: React.FC = () => {
             role="switch"
             aria-checked={isDark}
             onClick={handleToggleDarkMode}
-            className="w-full text-left py-1.5 md:py-2 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] transition-all cursor-pointer"
+            className="w-full text-left py-1 md:py-1.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] transition-all cursor-pointer"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
@@ -313,10 +327,65 @@ export const MenuPage: React.FC = () => {
             </span>
           </button>
 
+          <button
+            type="button"
+            onClick={() => {
+              navigator.vibrate?.(15);
+              openActivationModal();
+            }}
+            className="w-full text-left py-1 md:py-1.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div
+                className={`w-6 h-6 md:w-7 md:h-7 rounded-lg border flex items-center justify-center shrink-0 ${
+                  isActivated
+                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border-emerald-200/70 dark:border-emerald-800/70'
+                    : 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border-amber-200/70 dark:border-amber-800/70'
+                }`}
+              >
+                <KeyRound size={13} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-slate-800 dark:text-slate-100 leading-tight truncate">
+                  Status Lisensi & Aktivasi
+                </p>
+                <p className="text-[9.5px] font-normal text-slate-500 dark:text-slate-400 mt-0.5 truncate tabular-nums">
+                  {isActivated
+                    ? 'Aktif Permanen • Versi Penuh'
+                    : `Mode Demo • Sisa ${remainingTransactions} dari ${maxDemoTransactions} Transaksi`}
+                </p>
+              </div>
+            </div>
+            <ChevronRight size={14} className="text-slate-400 dark:text-slate-500 shrink-0" />
+          </button>
+
+          <a
+            href={developerWaHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => navigator.vibrate?.(15)}
+            className="py-1 md:py-1.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] transition-all"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/70 flex items-center justify-center shrink-0">
+                <MessageCircle size={13} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-slate-800 dark:text-slate-100 leading-tight truncate">
+                  Hubungi Developer (WhatsApp)
+                </p>
+                <p className="text-[9.5px] font-normal text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                  0811-1390-0923 • Bantuan & Lisensi
+                </p>
+              </div>
+            </div>
+            <ChevronRight size={14} className="text-slate-400 dark:text-slate-500 shrink-0" />
+          </a>
+
           <Link
             to="/guide"
             onClick={() => navigator.vibrate?.(15)}
-            className="py-1.5 md:py-2 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] active:bg-blue-50/40 transition-all"
+            className="py-1 md:py-1.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] active:bg-blue-50/40 transition-all"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-200/70 dark:border-sky-800/70 flex items-center justify-center shrink-0">
@@ -337,7 +406,7 @@ export const MenuPage: React.FC = () => {
           <Link
             to="/settings"
             onClick={() => navigator.vibrate?.(15)}
-            className="py-1.5 md:py-2 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] active:bg-blue-50/40 transition-all"
+            className="py-1 md:py-1.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] active:bg-blue-50/40 transition-all"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700 flex items-center justify-center shrink-0">
@@ -361,7 +430,7 @@ export const MenuPage: React.FC = () => {
               navigator.vibrate?.(15);
               setIsImportOpen(true);
             }}
-            className="w-full text-left py-1.5 md:py-2 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] active:bg-emerald-50/40 transition-all cursor-pointer"
+            className="w-full text-left py-1 md:py-1.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] active:bg-emerald-50/40 transition-all cursor-pointer"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/70 flex items-center justify-center shrink-0">
@@ -382,7 +451,7 @@ export const MenuPage: React.FC = () => {
           <Link
             to="/backup"
             onClick={() => navigator.vibrate?.(15)}
-            className="py-1.5 md:py-2 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] active:bg-blue-50/40 transition-all"
+            className="py-1 md:py-1.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] active:bg-blue-50/40 transition-all"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-200/60 dark:border-purple-800/70 flex items-center justify-center shrink-0">
@@ -403,7 +472,7 @@ export const MenuPage: React.FC = () => {
           <Link
             to="/about"
             onClick={() => navigator.vibrate?.(15)}
-            className="py-1.5 md:py-2 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] active:bg-blue-50/40 transition-all"
+            className="py-1 md:py-1.5 px-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] active:bg-blue-50/40 transition-all"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#0866E9] dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/70 flex items-center justify-center shrink-0">

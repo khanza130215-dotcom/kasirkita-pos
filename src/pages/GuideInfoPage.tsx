@@ -1,14 +1,24 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   BookOpen,
+  Check,
   CheckCircle2,
+  Copy,
   HardDrive,
   Info,
+  KeyRound,
   RefreshCw,
-  Smartphone
+  Smartphone,
+  X
 } from 'lucide-react';
+import {
+  DEVELOPER_MASTER_KEY,
+  generateActivationCode,
+  normalizeDeviceId
+} from '../services/licenseService';
+import { useLicense } from '../context/LicenseContext';
 
 interface StorageEstimateState {
   supported: boolean;
@@ -77,6 +87,7 @@ const GUIDE_STEPS = [
 
 export const GuideInfoPage: React.FC = () => {
   const navigate = useNavigate();
+  const { deviceId } = useLicense();
   const [storage, setStorage] = useState<StorageEstimateState>({
     supported: typeof navigator !== 'undefined' && Boolean(navigator.storage?.estimate),
     loading: true,
@@ -84,6 +95,54 @@ export const GuideInfoPage: React.FC = () => {
     remainingBytes: 0,
     quotaBytes: 0
   });
+
+  // Hidden Developer License Generator (7x tap on "KasirKita POS" title)
+  const tapCountRef = useRef(0);
+  const tapTimerRef = useRef<number | null>(null);
+  const [isDevModalOpen, setIsDevModalOpen] = useState(false);
+  const [buyerDeviceId, setBuyerDeviceId] = useState('');
+  const [generatedCode, setGeneratedCode] = useState('');
+  const [copiedCode, setCopiedCode] = useState(false);
+
+  const handleTitleTap = () => {
+    tapCountRef.current += 1;
+    if (tapTimerRef.current) {
+      window.clearTimeout(tapTimerRef.current);
+    }
+    if (tapCountRef.current >= 7) {
+      tapCountRef.current = 0;
+      setIsDevModalOpen(true);
+      return;
+    }
+    tapTimerRef.current = window.setTimeout(() => {
+      tapCountRef.current = 0;
+    }, 2500);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (tapTimerRef.current) window.clearTimeout(tapTimerRef.current);
+    };
+  }, []);
+
+  const handleGenerateCode = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleaned = normalizeDeviceId(buyerDeviceId);
+    if (!cleaned) return;
+    setGeneratedCode(generateActivationCode(cleaned));
+    setCopiedCode(false);
+  };
+
+  const handleCopyGenerated = async () => {
+    if (!generatedCode) return;
+    try {
+      await navigator.clipboard.writeText(generatedCode);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 2000);
+    } catch {
+      setCopiedCode(false);
+    }
+  };
 
   const checkStorage = useCallback(async () => {
     if (typeof navigator === 'undefined' || !navigator.storage?.estimate) {
@@ -166,7 +225,10 @@ export const GuideInfoPage: React.FC = () => {
               <Smartphone size={16} />
             </div>
             <div className="min-w-0">
-              <h2 className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug">
+              <h2
+                onClick={handleTitleTap}
+                className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-slate-100 leading-snug cursor-default"
+              >
                 KasirKita POS — Kasir Cepat & Offline-First
               </h2>
               <p className="text-[11px] sm:text-xs font-normal text-slate-600 dark:text-slate-300 leading-relaxed mt-1">
@@ -317,6 +379,120 @@ export const GuideInfoPage: React.FC = () => {
           </section>
         </div>
       </div>
+
+      {/* Hidden Admin Tool: Developer License Generator */}
+      {isDevModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 dark:bg-black/75 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#0866E9] dark:text-blue-400 border border-blue-200/70 dark:border-blue-800/70 flex items-center justify-center">
+                  <KeyRound size={15} />
+                </div>
+                <div>
+                  <h3 className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-slate-100 leading-none">
+                    Developer License Generator
+                  </h3>
+                  <p className="text-[10px] font-normal text-slate-500 dark:text-slate-400 mt-0.5">
+                    Generator kode aktivasi Device-Bound
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsDevModalOpen(false)}
+                className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 flex items-center justify-center cursor-pointer"
+                aria-label="Tutup"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            <form onSubmit={handleGenerateCode} className="p-4 space-y-3">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label
+                    htmlFor="buyer-device-id"
+                    className="text-[11px] font-medium text-slate-700 dark:text-slate-300"
+                  >
+                    ID Perangkat Pembeli
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBuyerDeviceId(deviceId);
+                      setGeneratedCode(generateActivationCode(deviceId));
+                      setCopiedCode(false);
+                    }}
+                    className="text-[10px] font-medium text-[#0866E9] dark:text-blue-400 hover:underline cursor-pointer"
+                  >
+                    Pakai ID Perangkat Ini
+                  </button>
+                </div>
+                <input
+                  id="buyer-device-id"
+                  type="text"
+                  value={buyerDeviceId}
+                  onChange={(e) => {
+                    setBuyerDeviceId(e.target.value.toUpperCase());
+                    if (generatedCode) setGeneratedCode('');
+                  }}
+                  placeholder="KSK-XXXX-XXXX"
+                  spellCheck={false}
+                  autoComplete="off"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm font-mono font-medium text-slate-900 dark:text-slate-100 tracking-wider uppercase outline-none focus:border-[#0866E9] dark:focus:border-blue-500 placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-2.5 px-4 rounded-xl bg-[#0866E9] hover:bg-blue-600 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs shadow-blue-500/20 active:scale-[0.98] transition-all cursor-pointer"
+              >
+                <KeyRound size={14} />
+                <span>Hasilkan Kode Aktivasi</span>
+              </button>
+
+              {generatedCode && (
+                <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/70 p-3">
+                  <span className="text-[10px] font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">
+                    Kode Aktivasi Siap Kirim
+                  </span>
+                  <div className="mt-1.5 flex items-center justify-between gap-2">
+                    <code className="text-sm font-mono font-semibold text-emerald-900 dark:text-emerald-200 tracking-wider select-all">
+                      {generatedCode}
+                    </code>
+                    <button
+                      type="button"
+                      onClick={handleCopyGenerated}
+                      className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 text-[11px] font-medium flex items-center gap-1 shrink-0 active:scale-95 transition-all cursor-pointer"
+                    >
+                      {copiedCode ? (
+                        <>
+                          <Check size={13} />
+                          <span>Tersalin</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy size={13} />
+                          <span>Salin</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <p className="text-[10px] font-normal text-slate-400 dark:text-slate-500 pt-1 border-t border-slate-100 dark:border-slate-800">
+                Master Key Pengujian Developer:{' '}
+                <code className="font-mono text-slate-600 dark:text-slate-300 select-all">
+                  {DEVELOPER_MASTER_KEY}
+                </code>
+              </p>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

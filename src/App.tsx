@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { LicenseProvider } from './context/LicenseContext';
 import { AppLayout } from './layouts/AppLayout';
 import { DashboardPage } from './pages/DashboardPage';
 import { KasirPage } from './pages/KasirPage';
@@ -28,35 +29,37 @@ export function App() {
     <ThemeProvider>
       <div className="fixed inset-0 w-full h-full overflow-hidden flex flex-col bg-slate-50 dark:bg-slate-950 select-none transition-colors duration-200">
         <OfflineIndicator />
-        <CartProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route element={<AppLayout />}>
-                {/* 5 Menu Navigasi Utama */}
-                <Route path="/" element={<DashboardPage />} />
-                <Route path="/beranda" element={<Navigate to="/" replace />} />
-                <Route path="/kasir" element={<KasirPage />} />
-                <Route path="/pos" element={<Navigate to="/kasir" replace />} />
-                <Route path="/products" element={<AllProductsPage />} />
-                <Route path="/laporan" element={<ReportsPage />} />
-                <Route path="/reports" element={<Navigate to="/laporan" replace />} />
-                <Route path="/menu" element={<MenuPage />} />
+        <LicenseProvider>
+          <CartProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route element={<AppLayout />}>
+                  {/* 5 Menu Navigasi Utama */}
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/beranda" element={<Navigate to="/" replace />} />
+                  <Route path="/kasir" element={<KasirPage />} />
+                  <Route path="/pos" element={<Navigate to="/kasir" replace />} />
+                  <Route path="/products" element={<AllProductsPage />} />
+                  <Route path="/laporan" element={<ReportsPage />} />
+                  <Route path="/reports" element={<Navigate to="/laporan" replace />} />
+                  <Route path="/menu" element={<MenuPage />} />
 
-                {/* Sub-Halaman Fitur Menu */}
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/expenses" element={<ExpensesPage />} />
-                <Route path="/shift" element={<ShiftPage />} />
-                <Route path="/transactions" element={<TransactionHistoryPage />} />
-                <Route path="/backup" element={<BackupPage />} />
-                <Route path="/guide" element={<GuideInfoPage />} />
-                <Route path="/about" element={<AboutPage />} />
+                  {/* Sub-Halaman Fitur Menu */}
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/expenses" element={<ExpensesPage />} />
+                  <Route path="/shift" element={<ShiftPage />} />
+                  <Route path="/transactions" element={<TransactionHistoryPage />} />
+                  <Route path="/backup" element={<BackupPage />} />
+                  <Route path="/guide" element={<GuideInfoPage />} />
+                  <Route path="/about" element={<AboutPage />} />
 
-                {/* Fallback jika rute tidak ditemukan */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </CartProvider>
+                  {/* Fallback jika rute tidak ditemukan */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </CartProvider>
+        </LicenseProvider>
       </div>
     </ThemeProvider>
   );
