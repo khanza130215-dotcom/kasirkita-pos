@@ -232,9 +232,10 @@ export const GuideInfoPage: React.FC = () => {
                 KasirKita POS — Kasir Cepat & Offline-First
               </h2>
               <p className="text-[12px] font-normal text-[#64748B] dark:text-[#94A3B8] leading-snug mt-1">
-                Aplikasi kasir modern yang dirancang ringan untuk HP, Tablet, dan PC. Seluruh data
-                produk dan transaksi tersimpan aman langsung di memori perangkat Anda sehingga kasir
-                tetap berjalan lancar 100% tanpa koneksi internet dan bebas biaya langganan server.
+                Aplikasi kasir ringan yang dirancang khusus untuk warung, toko kelontong, kedai, dan
+                UMKM (bukan untuk minimarket jaringan atau grosir skala besar). Seluruh data produk
+                dan transaksi tersimpan aman langsung di memori perangkat Anda sehingga kasir tetap
+                berjalan cepat 100% tanpa koneksi internet dan bebas biaya langganan bulanan.
               </p>
             </div>
           </div>
@@ -371,8 +372,9 @@ export const GuideInfoPage: React.FC = () => {
                   <span className="text-[#172033] dark:text-white font-medium">
                     Rekomendasi:
                   </span>{' '}
-                  Total penyimpanan rata-rata di bawah 20 MB sehingga tidak membebani RAM maupun
-                  baterai HP/Tablet kasir.
+                  Cocok untuk operasional harian warung & UMKM (ratusan hingga ribuan item) dengan
+                  total penyimpanan di bawah 20 MB sehingga tetap ringan dan hemat baterai di HP
+                  maupun Tablet.
                 </li>
               </ul>
             </div>
