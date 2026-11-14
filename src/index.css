@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --bg-page: #F1F4F8;
+  --bg-surface: #FFFFFF;
+  --bg-subtle: #F1F5F9;
+  --border-app: #E2E8F0;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --primary-accent: #0866E9;
+}
+
+html.dark {
+  color-scheme: dark;
+  --bg-page: #020617;
+  --bg-surface: #0F172A;
+  --bg-subtle: #1E293B;
+  --border-app: #1E293B;
+  --text-main: #F1F5F9;
+  --text-muted: #94A3B8;
+  --primary-accent: #3B82F6;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --color-primary: var(--primary-accent);
+  --color-primary-dark: #024BB5;
+  --color-accent: #FF7900;
+}
+
+html, body, #root {
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #F1F4F8 !important;
+  color: #0F172A !important;
+}
+
+html.dark, html.dark body, html.dark #root {
+  background-color: #020617 !important;
+  color: #F1F5F9 !important;
+}
