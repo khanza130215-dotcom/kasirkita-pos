@@ -31,11 +31,13 @@ export const shiftService = {
   },
 
   async getShiftSummary(shiftId: number) {
-    const transactions = await db.transactions.where('shiftId').equals(shiftId).toArray();
+    const transactions = await db.transactions.filter(t => t.shiftId === shiftId).toArray();
     const completedTransactions = transactions.filter(t => t.status === 'COMPLETED');
     const transIds = completedTransactions.map(t => t.id);
     
-    const payments = await db.payments.where('transactionId').anyOf(transIds).toArray();
+    const payments = transIds.length > 0
+      ? await db.payments.where('transactionId').anyOf(transIds).toArray()
+      : [];
     const movements = await db.cash_movements.where('shiftId').equals(shiftId).toArray();
     
     const summary = payments.reduce((acc, p) => {

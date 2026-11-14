@@ -27,7 +27,7 @@ export function App() {
 
   return (
     <ThemeProvider>
-      <div className="fixed inset-0 w-full h-full overflow-hidden flex flex-col bg-slate-50 dark:bg-slate-950 select-none transition-colors duration-200">
+      <div className="fixed inset-0 w-full h-full overflow-hidden flex flex-col bg-[#F1F4F8] dark:bg-[#070B16] text-[#172033] dark:text-white font-sans select-none transition-colors duration-200">
         <OfflineIndicator />
         <LicenseProvider>
           <CartProvider>

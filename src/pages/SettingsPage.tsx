@@ -192,309 +192,317 @@ export const SettingsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center p-6 text-slate-400 text-xs font-medium bg-slate-50 dark:bg-slate-950">
+      <div className="flex-1 flex items-center justify-center p-6 text-[#64748B] dark:text-[#94A3B8] text-[13px] font-medium bg-[#F1F4F8] dark:bg-[#070B16]">
         Memuat konfigurasi toko...
       </div>
     );
   }
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto px-4 pt-3 pb-24 bg-slate-50 dark:bg-slate-950 select-none transition-colors duration-200">
-      {/* Header Halaman */}
-      <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 dark:border-slate-800">
-        <div>
-          <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 tracking-tight">PENGATURAN TOKO</h2>
-          <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-0.5">
-            KONFIGURASI SISTEM
-          </p>
+    <div className="flex-1 min-h-0 flex flex-col overflow-hidden bg-[#F1F4F8] dark:bg-[#070B16] text-[#172033] dark:text-white select-none transition-colors duration-200">
+      {/* Header Halaman Terkunci di Atas */}
+      <div className="shrink-0 px-3 pt-2 pb-1.5 border-b border-[#E2E8F0] dark:border-[#263954] bg-[#F1F4F8] dark:bg-[#070B16]">
+        <div className="max-w-3xl mx-auto w-full flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <h1 className="text-[17px] font-semibold text-[#172033] dark:text-white tracking-tight leading-tight">
+              Pengaturan Toko
+            </h1>
+            <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] font-normal mt-0.5 leading-tight truncate">
+              Konfigurasi identitas toko, QRIS, dan printer
+            </p>
+          </div>
+          {showToast && (
+            <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-800/70 shrink-0">
+              <CheckCircle2 size={13} /> {toastText}
+            </span>
+          )}
         </div>
-        {showToast && (
-          <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800/70">
-            <CheckCircle2 size={13} /> {toastText}
-          </span>
-        )}
       </div>
 
-      {errorMsg && (
-        <div className="mb-3 flex items-center gap-2 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/70 text-rose-700 dark:text-rose-400 text-xs px-3 py-2 rounded-xl">
-          <AlertCircle size={14} className="shrink-0" />
-          <span>{errorMsg}</span>
-        </div>
-      )}
-
-      <form onSubmit={handleSaveIdentity} className="flex flex-col gap-4">
-        {/* Identitas Toko */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 shadow-xs flex flex-col gap-3 transition-colors">
-          <div className="flex items-center gap-1.5 pb-2 border-b border-slate-100 dark:border-slate-800">
-            <Store className="w-4 h-4 text-[#0866E9] dark:text-blue-400" />
-            <h3 className="text-xs font-semibold text-slate-800 dark:text-slate-100 tracking-tight uppercase">
-              IDENTITAS TOKO
-            </h3>
-          </div>
-
-          {/* Nama Toko */}
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1">
-              <span>NAMA TOKO</span>
-              <span className="text-rose-500">*</span>
-            </label>
-            <div className="relative flex items-center">
-              <Store className="w-3.5 h-3.5 text-slate-400 absolute left-3" />
-              <input
-                type="text"
-                required
-                value={storeName}
-                onChange={(e) => setStoreName(e.target.value)}
-                placeholder="Masukkan nama toko..."
-                className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none focus:border-[#0866E9] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600 placeholder:font-normal"
-              />
+      <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="max-w-3xl mx-auto w-full">
+          {errorMsg && (
+            <div className="mb-2 flex items-center gap-2 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/70 text-rose-700 dark:text-rose-400 text-[12px] px-3 py-2 rounded-xl">
+              <AlertCircle size={14} className="shrink-0" />
+              <span>{errorMsg}</span>
             </div>
-          </div>
+          )}
 
-          {/* Alamat Lengkap */}
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-              ALAMAT LENGKAP
-            </label>
-            <div className="relative flex items-center">
-              <MapPin className="w-3.5 h-3.5 text-slate-400 absolute left-3" />
-              <input
-                type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Masukkan alamat toko..."
-                className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none focus:border-[#0866E9] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600"
-              />
-            </div>
-          </div>
+          <form onSubmit={handleSaveIdentity} className="flex flex-col gap-2">
+            {/* Identitas Toko */}
+            <div className="bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-2.5 shadow-2xs flex flex-col gap-1.5 transition-colors">
+              <div className="flex items-center gap-2 pb-1.5 border-b border-[#E2E8F0] dark:border-[#263954]">
+                <Store className="w-4 h-4 text-[#0866E9] dark:text-[#FF7900]" />
+                <h2 className="text-[13.5px] font-semibold text-[#172033] dark:text-white tracking-tight leading-tight">
+                  Identitas Toko
+                </h2>
+              </div>
 
-          {/* Telepon & WhatsApp */}
-          <div className="grid grid-cols-2 gap-2">
+            {/* Nama Toko */}
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                TELEPON
+              <label className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8] flex items-center gap-1">
+                <span>Nama Toko</span>
+                <span className="text-rose-500">*</span>
               </label>
               <div className="relative flex items-center">
-                <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3" />
+                <Store className="w-3.5 h-3.5 text-[#64748B] dark:text-[#94A3B8] absolute left-3" />
                 <input
                   type="text"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Nomor telepon..."
-                  className="w-full pl-8 pr-2 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none focus:border-[#0866E9] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                  required
+                  value={storeName}
+                  onChange={(e) => setStoreName(e.target.value)}
+                  placeholder="Masukkan nama toko..."
+                  className="w-full h-10 pl-9 pr-3 bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl text-[12.5px] font-normal text-[#172033] dark:text-white focus:outline-none focus:border-[#0866E9] dark:focus:border-[#FF7900] transition-colors placeholder:text-[#64748B]/70 dark:placeholder:text-[#94A3B8]/60"
                 />
               </div>
             </div>
 
+            {/* Alamat Lengkap */}
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                WHATSAPP
+              <label className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                Alamat Lengkap
               </label>
               <div className="relative flex items-center">
-                <MessageSquare className="w-3.5 h-3.5 text-slate-400 absolute left-3" />
+                <MapPin className="w-3.5 h-3.5 text-[#64748B] dark:text-[#94A3B8] absolute left-3" />
                 <input
                   type="text"
-                  value={whatsapp}
-                  onChange={(e) => setWhatsapp(e.target.value)}
-                  placeholder="Nomor WhatsApp..."
-                  className="w-full pl-8 pr-2 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none focus:border-[#0866E9] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Masukkan alamat toko..."
+                  className="w-full h-10 pl-9 pr-3 bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl text-[12.5px] font-normal text-[#172033] dark:text-white focus:outline-none focus:border-[#0866E9] dark:focus:border-[#FF7900] transition-colors placeholder:text-[#64748B]/70 dark:placeholder:text-[#94A3B8]/60"
                 />
               </div>
             </div>
-          </div>
 
-          {/* QRIS Toko (NMID/Merchant + Unggah Gambar QRIS) */}
-          <div className="bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex flex-col gap-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <QrCode className="w-3.5 h-3.5 text-[#0866E9] dark:text-blue-400" />
-                <span className="text-[10px] font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
-                  QRIS PEMBAYARAN TOKO
-                </span>
+            {/* Telepon & WhatsApp */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                  Telepon
+                </label>
+                <div className="relative flex items-center">
+                  <Phone className="w-3.5 h-3.5 text-[#64748B] dark:text-[#94A3B8] absolute left-2.5" />
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="No. telepon..."
+                    className="w-full h-10 pl-8 pr-2.5 bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl text-[12.5px] font-normal text-[#172033] dark:text-white focus:outline-none focus:border-[#0866E9] dark:focus:border-[#FF7900] transition-colors placeholder:text-[#64748B]/70 dark:placeholder:text-[#94A3B8]/60"
+                  />
+                </div>
               </div>
-              {qrisImage && (
-                <span className="text-[9px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/70 px-2 py-0.5 rounded-full">
-                  Aktif
-                </span>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                  WhatsApp
+                </label>
+                <div className="relative flex items-center">
+                  <MessageSquare className="w-3.5 h-3.5 text-[#64748B] dark:text-[#94A3B8] absolute left-2.5" />
+                  <input
+                    type="text"
+                    value={whatsapp}
+                    onChange={(e) => setWhatsapp(e.target.value)}
+                    placeholder="No. WhatsApp..."
+                    className="w-full h-10 pl-8 pr-2.5 bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl text-[12.5px] font-normal text-[#172033] dark:text-white focus:outline-none focus:border-[#0866E9] dark:focus:border-[#FF7900] transition-colors placeholder:text-[#64748B]/70 dark:placeholder:text-[#94A3B8]/60"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* QRIS Toko */}
+            <div className="bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-2.5 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <QrCode className="w-4 h-4 text-[#0866E9] dark:text-[#FF7900]" />
+                  <span className="text-[12.5px] font-semibold text-[#172033] dark:text-white leading-tight">
+                    QRIS Pembayaran Toko
+                  </span>
+                </div>
+                {qrisImage && (
+                  <span className="text-[10.5px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/70 px-1.5 py-0.5 rounded-md">
+                    Aktif
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                  NMID / Nama Merchant QRIS
+                </label>
+                <input
+                  type="text"
+                  value={qrisName}
+                  onChange={(e) => setQrisName(e.target.value)}
+                  placeholder="Contoh: TOKO FARDAN · NMID ID102030..."
+                  className="w-full h-10 px-3 bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-xl text-[12.5px] font-normal text-[#172033] dark:text-white focus:outline-none focus:border-[#0866E9] dark:focus:border-[#FF7900] transition-colors placeholder:text-[#64748B]/70 dark:placeholder:text-[#94A3B8]/60"
+                />
+              </div>
+
+              {qrisImage ? (
+                <div className="flex items-center gap-2.5 bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-2">
+                  <div className="bg-white p-1.5 rounded-lg border border-[#E2E8F0] shrink-0">
+                    <img
+                      src={qrisImage}
+                      alt="Preview QRIS Toko"
+                      className="w-14 h-14 object-contain"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                    <p className="text-xs font-medium text-[#172033] dark:text-white truncate">
+                      Gambar QRIS Terpasang
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <label className="min-h-[44px] px-3 py-1.5 rounded-lg bg-[#F1F4F8] dark:bg-[#070B16] hover:border-[#0866E9] dark:hover:border-[#FF7900] text-[#0866E9] dark:text-[#FF7900] border border-[#E2E8F0] dark:border-[#263954] text-xs font-medium flex items-center gap-1.5 cursor-pointer transition-colors">
+                        <Upload size={13} />
+                        <span>Ganti QRIS</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleQrisUpload}
+                          className="hidden"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleRemoveQris}
+                        className="min-h-[44px] px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/70 text-xs font-medium flex items-center gap-1.5 cursor-pointer transition-colors"
+                      >
+                        <Trash2 size={13} />
+                        <span>Hapus</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <label className="min-h-[44px] flex items-center justify-center gap-2 border border-dashed border-[#0866E9]/40 dark:border-[#FF7900]/50 bg-white dark:bg-[#111D30] hover:bg-blue-50/40 dark:hover:bg-[#192842] rounded-xl p-2.5 cursor-pointer transition-colors">
+                  <Upload size={16} className="text-[#0866E9] dark:text-[#FF7900] shrink-0" />
+                  <div className="text-left">
+                    <p className="text-[12.5px] font-medium text-[#172033] dark:text-white leading-tight">
+                      Unggah Gambar QRIS Toko
+                    </p>
+                    <p className="text-[10.5px] text-[#64748B] dark:text-[#94A3B8] mt-0.5 leading-tight">
+                      Otomatis dikompres ringan agar cepat tampil di Kasir
+                    </p>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleQrisUpload}
+                    className="hidden"
+                  />
+                </label>
               )}
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-[9.5px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                NMID / NAMA MERCHANT QRIS
-              </label>
-              <input
-                type="text"
-                value={qrisName}
-                onChange={(e) => setQrisName(e.target.value)}
-                placeholder="Contoh: TOKO FARDAN • NMID ID102030..."
-                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none focus:border-[#0866E9] dark:focus:border-blue-500 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600"
-              />
-            </div>
-
-            {qrisImage ? (
-              <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5">
-                {/* Area QRIS selalu putih (bg-white p-2 rounded-lg) agar terbaca jelas oleh scanner */}
-                <div className="bg-white p-2 rounded-lg border border-slate-200 shrink-0">
-                  <img
-                    src={qrisImage}
-                    alt="Preview QRIS Toko"
-                    className="w-16 h-16 object-contain"
+            {/* Tagline & Pesan Footer */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                  Tagline Toko
+                </label>
+                <div className="relative flex items-center">
+                  <Tag className="w-3.5 h-3.5 text-[#64748B] dark:text-[#94A3B8] absolute left-2.5" />
+                  <input
+                    type="text"
+                    value={tagline}
+                    onChange={(e) => setTagline(e.target.value)}
+                    placeholder="Slogan toko..."
+                    className="w-full h-10 pl-8 pr-2.5 bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl text-[12.5px] font-normal text-[#172033] dark:text-white focus:outline-none focus:border-[#0866E9] dark:focus:border-[#FF7900] transition-colors placeholder:text-[#64748B]/70 dark:placeholder:text-[#94A3B8]/60"
                   />
                 </div>
-                <div className="flex-1 min-w-0 flex flex-col gap-1.5">
-                  <p className="text-[10.5px] font-medium text-slate-700 dark:text-slate-200 truncate">
-                    Gambar QRIS Terpasang
-                  </p>
-                  <div className="flex items-center gap-1.5">
-                    <label className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-[#0866E9] dark:text-blue-400 border border-blue-200 dark:border-blue-800/70 text-[10px] font-medium flex items-center gap-1 cursor-pointer transition-colors">
-                      <Upload size={11} />
-                      <span>Ganti QRIS</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleQrisUpload}
-                        className="hidden"
-                      />
-                    </label>
-                    <button
-                      type="button"
-                      onClick={handleRemoveQris}
-                      className="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/70 text-[10px] font-medium flex items-center gap-1 cursor-pointer transition-colors"
-                    >
-                      <Trash2 size={11} />
-                      <span>Hapus</span>
-                    </button>
-                  </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                  Pesan Footer Struk
+                </label>
+                <div className="relative flex items-center">
+                  <Receipt className="w-3.5 h-3.5 text-[#64748B] dark:text-[#94A3B8] absolute left-2.5" />
+                  <input
+                    type="text"
+                    value={footerMessage}
+                    onChange={(e) => setFooterMessage(e.target.value)}
+                    placeholder="Pesan footer..."
+                    className="w-full h-10 pl-8 pr-2.5 bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl text-[12.5px] font-normal text-[#172033] dark:text-white focus:outline-none focus:border-[#0866E9] dark:focus:border-[#FF7900] transition-colors placeholder:text-[#64748B]/70 dark:placeholder:text-[#94A3B8]/60"
+                  />
                 </div>
               </div>
-            ) : (
-              <label className="flex items-center justify-center gap-2 border border-dashed border-blue-300 dark:border-blue-700 bg-white dark:bg-slate-900 hover:bg-blue-50/40 dark:hover:bg-slate-800/80 rounded-xl p-2.5 cursor-pointer transition-colors">
-                <Upload size={15} className="text-[#0866E9] dark:text-blue-400 shrink-0" />
-                <div className="text-left">
-                  <p className="text-[11px] font-medium text-slate-700 dark:text-slate-200 leading-tight">
-                    Unggah Gambar QRIS Toko
-                  </p>
-                  <p className="text-[9.5px] text-slate-400">
-                    Otomatis dikompres ringan agar cepat tampil di Kasir
-                  </p>
-                </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleQrisUpload}
-                  className="hidden"
-                />
-              </label>
-            )}
+            </div>
+
+            {/* Tombol Simpan Identitas */}
+            <button
+              type="submit"
+              disabled={saving}
+              className="w-full min-h-[44px] mt-0.5 py-2 rounded-xl bg-[#0866E9] hover:bg-[#0758CC] active:scale-[0.98] text-white font-semibold text-[12.5px] shadow-2xs flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-45"
+            >
+              <Save size={15} />
+              <span>{saving ? 'Menyimpan...' : 'Simpan Identitas'}</span>
+            </button>
           </div>
 
-          {/* Tagline Toko */}
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-              TAGLINE TOKO
-            </label>
-            <div className="relative flex items-center">
-              <Tag className="w-3.5 h-3.5 text-slate-400 absolute left-3" />
+          {/* Printer & Struk */}
+          <div className="bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-2.5 shadow-2xs flex flex-col gap-2 transition-colors">
+            <div className="flex items-center gap-2 pb-1.5 border-b border-[#E2E8F0] dark:border-[#263954]">
+              <Printer className="w-4 h-4 text-[#0866E9] dark:text-[#FF7900]" />
+              <h2 className="text-[13.5px] font-semibold text-[#172033] dark:text-white tracking-tight leading-tight">
+                Printer & Struk
+              </h2>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-[12.5px] font-medium text-[#172033] dark:text-white">Ukuran Kertas</span>
+              <div className="flex items-center bg-[#F1F4F8] dark:bg-[#070B16] p-1 rounded-xl border border-[#E2E8F0] dark:border-[#263954] gap-1">
+                <button
+                  type="button"
+                  onClick={() => handlePaperSizeChange('58mm')}
+                  className={`min-h-[44px] px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                    paperSize === '58mm'
+                      ? 'bg-[#0866E9] dark:bg-[#FF7900] text-white shadow-2xs font-semibold'
+                      : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#172033] dark:hover:text-white'
+                  }`}
+                >
+                  Thermal 58mm
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handlePaperSizeChange('80mm')}
+                  className={`min-h-[44px] px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                    paperSize === '80mm'
+                      ? 'bg-[#0866E9] dark:bg-[#FF7900] text-white shadow-2xs font-semibold'
+                      : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#172033] dark:hover:text-white'
+                  }`}
+                >
+                  Thermal 80mm
+                </button>
+              </div>
+            </div>
+
+            <label className="min-h-[44px] flex items-center justify-between pt-2 border-t border-[#E2E8F0] dark:border-[#263954] cursor-pointer">
+              <div className="flex flex-col">
+                <span className="text-[12.5px] font-medium text-[#172033] dark:text-white leading-tight">Cetak Otomatis</span>
+                <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] font-normal mt-0.5 leading-tight">
+                  Cetak struk seketika transaksi sukses
+                </span>
+              </div>
               <input
-                type="text"
-                value={tagline}
-                onChange={(e) => setTagline(e.target.value)}
-                placeholder="Slogan atau moto toko..."
-                className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none focus:border-[#0866E9] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                type="checkbox"
+                checked={autoPrint}
+                onChange={(e) => handleAutoPrintChange(e.target.checked)}
+                className="w-5 h-5 accent-[#0866E9] dark:accent-[#FF7900] rounded cursor-pointer shrink-0"
               />
-            </div>
-          </div>
-
-          {/* Pesan Footer Struk */}
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-              PESAN FOOTER STRUK
             </label>
-            <div className="relative flex items-center">
-              <Receipt className="w-3.5 h-3.5 text-slate-400 absolute left-3" />
-              <input
-                type="text"
-                value={footerMessage}
-                onChange={(e) => setFooterMessage(e.target.value)}
-                placeholder="Pesan di bagian bawah nota/struk..."
-                className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none focus:border-[#0866E9] dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 transition-all placeholder:text-slate-300 dark:placeholder:text-slate-600"
-              />
-            </div>
           </div>
 
-          {/* Tombol Simpan Identitas */}
-          <button
-            type="submit"
-            disabled={saving}
-            className="w-full mt-1 py-2.5 rounded-xl bg-[#0866E9] hover:bg-blue-700 active:scale-98 text-white font-semibold text-xs shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
-          >
-            <Save size={14} />
-            <span>{saving ? 'MENYIMPAN...' : 'SIMPAN IDENTITAS'}</span>
-          </button>
+          {/* Footer JacS Enterprise */}
+          <div className="text-center py-1 flex flex-col items-center gap-0.5">
+            <span className="text-[11px] font-semibold text-[#172033] dark:text-white">JacS Enterprise POS</span>
+            <span className="text-[10.5px] text-[#64748B] dark:text-[#94A3B8] font-normal">
+              Versi 4.0.0 · Mobile Edition
+            </span>
+          </div>
+        </form>
         </div>
-
-        {/* Printer & Struk */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 shadow-xs flex flex-col gap-3 transition-colors">
-          <div className="flex items-center gap-1.5 pb-2 border-b border-slate-100 dark:border-slate-800">
-            <Printer className="w-4 h-4 text-slate-700 dark:text-slate-300" />
-            <h3 className="text-xs font-semibold text-slate-800 dark:text-slate-100 tracking-tight uppercase">
-              PRINTER & STRUK
-            </h3>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-medium text-slate-700 dark:text-slate-200">Ukuran Kertas</span>
-            <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
-              <button
-                type="button"
-                onClick={() => handlePaperSizeChange('58mm')}
-                className={`px-3 py-1 rounded-md text-[10px] font-medium transition-all cursor-pointer ${
-                  paperSize === '58mm'
-                    ? 'bg-[#0866E9] text-white shadow-2xs'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                Thermal 58mm
-              </button>
-              <button
-                type="button"
-                onClick={() => handlePaperSizeChange('80mm')}
-                className={`px-3 py-1 rounded-md text-[10px] font-medium transition-all cursor-pointer ${
-                  paperSize === '80mm'
-                    ? 'bg-[#0866E9] text-white shadow-2xs'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                Thermal 80mm
-              </button>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800">
-            <div className="flex flex-col">
-              <span className="text-[11px] font-medium text-slate-800 dark:text-slate-100">Cetak Otomatis</span>
-              <span className="text-[9.5px] text-slate-400 font-normal">
-                Cetak struk seketika transaksi sukses
-              </span>
-            </div>
-            <input
-              type="checkbox"
-              checked={autoPrint}
-              onChange={(e) => handleAutoPrintChange(e.target.checked)}
-              className="w-4 h-4 accent-[#0866E9] rounded cursor-pointer"
-            />
-          </div>
-        </div>
-
-        {/* Footer JacS Enterprise */}
-        <div className="text-center py-2 flex flex-col items-center">
-          <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">JacS Enterprise POS</span>
-          <span className="text-[8.5px] text-slate-400 font-normal">
-            Versi 4.0.0 • Mobile Edition
-          </span>
-        </div>
-      </form>
+      </div>
     </div>
   );
 };

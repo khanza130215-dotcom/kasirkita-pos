@@ -1,19 +1,33 @@
-import React from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useLiveQuery } from 'dexie-react-hooks';
 import {
-  HomeIcon,
-  ShoppingCartIcon,
-  Squares2X2Icon,
-  ChartBarIcon,
-  Bars3Icon,
-} from '@heroicons/react/24/outline';
-import { KeyRound } from 'lucide-react';
+  AlertTriangle,
+  Bell,
+  CheckCircle2,
+  Clock,
+  KeyRound,
+  Moon,
+  Sun,
+  X,
+} from 'lucide-react';
+import { db } from '../db/db';
+import { settingsService } from '../services/settingsService';
+import { useTheme } from '../context/ThemeContext';
 import { useLicense } from '../context/LicenseContext';
 import { ActivationModal } from '../components/license/ActivationModal';
+import { BottomNavigation } from '../components/ui/BottomNavigation';
+
+const getInitials = (name: string): string => {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return 'KK';
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[1][0]).toUpperCase();
+};
 
 export const AppLayout: React.FC = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
   const {
     isActivated,
     isDemoExpired,
@@ -22,79 +36,254 @@ export const AppLayout: React.FC = () => {
     openActivationModal,
   } = useLicense();
 
-  const navItems = [
-    { label: 'BERANDA', path: '/', icon: HomeIcon },
-    { label: 'KASIR', path: '/kasir', icon: ShoppingCartIcon },
-    { label: 'PRODUK', path: '/products', icon: Squares2X2Icon },
-    { label: 'LAPORAN', path: '/laporan', icon: ChartBarIcon },
-    { label: 'MENU', path: '/menu', icon: Bars3Icon },
-  ];
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const notifRef = useRef<HTMLDivElement>(null);
 
-  const isRouteActive = (path: string) => {
-    if (path === '/') return location.pathname === '/';
-    return location.pathname.startsWith(path);
-  };
+  // Pastikan record settings default tersedia saat awal boot
+  useEffect(() => {
+    settingsService.getSettings().catch(() => undefined);
+  }, []);
+
+  // Ambil pengaturan toko secara live dari IndexedDB (Settings)
+  const storeSettings = useLiveQuery(() => db.settings.toCollection().first(), []);
+  const lowStockCount =
+    useLiveQuery(async () => {
+      const products = await db.products.toArray();
+      return products.filter(
+        (p) => p.status !== 'inactive' && (p.openingStock ?? 0) <= (p.minimumStock ?? 0)
+      ).length;
+    }, [], 0) ?? 0;
+  const activeShift = useLiveQuery(
+    () => db.shifts.where('status').equals('open').first(),
+    []
+  );
+
+  useEffect(() => {
+    if (!isNotifOpen) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setIsNotifOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [isNotifOpen]);
+
+  const storeName = storeSettings?.storeName?.trim() || 'KasirKita POS';
+  const storeAddress = storeSettings?.address?.trim() || 'Alamat toko belum diatur';
+  const storeLogo = storeSettings?.logo?.trim() || '';
+  const initials = getInitials(storeName);
+
+  const hasAlerts = !isActivated || lowStockCount > 0;
 
   return (
-    <div className="w-full h-full flex flex-col md:flex-row overflow-hidden bg-slate-50 dark:bg-slate-950 select-none transition-colors duration-200">
-      {/* Area Konten Utama */}
-      <main className="order-1 md:order-2 flex-1 min-h-0 min-w-0 w-full overflow-hidden flex flex-col">
-        {!isActivated && !isDemoExpired && (
-          <button
-            type="button"
-            onClick={openActivationModal}
-            className="flex-none shrink-0 w-full bg-amber-50 dark:bg-amber-950/70 hover:bg-amber-100/80 dark:hover:bg-amber-900/60 border-b border-amber-200/80 dark:border-amber-800/70 py-1 px-3 flex items-center justify-center gap-1.5 text-[11px] leading-tight font-medium text-amber-800 dark:text-amber-300 transition-colors cursor-pointer"
-          >
-            <KeyRound size={11} className="shrink-0 text-amber-600 dark:text-amber-400" />
-            <span className="truncate tabular-nums">
-              Mode Demo (Sisa {remainingTransactions} dari {maxDemoTransactions} Transaksi) •{' '}
-              <span className="underline underline-offset-2 text-[#0866E9] dark:text-blue-400">
-                Aktivasi Sekarang
-              </span>
+    <div className="w-full h-full flex flex-col overflow-hidden bg-[#F1F4F8] dark:bg-[#070B16] text-[#172033] dark:text-white select-none transition-colors duration-200">
+      {/* Header Global */}
+      <header className="flex-none w-full bg-white/95 dark:bg-[#111D30]/95 backdrop-blur-md border-b border-[#E2E8F0] dark:border-[#263954] z-30 transition-colors duration-200">
+        <div className="max-w-7xl mx-auto w-full px-3 sm:px-4 h-[52px] flex items-center justify-between gap-2">
+          {/* Avatar, Nama Toko & Alamat Toko dari Settings */}
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            {storeLogo ? (
+              <img
+                src={storeLogo}
+                alt={storeName}
+                className="w-8 h-8 rounded-lg object-cover border border-[#E2E8F0] dark:border-[#263954] shrink-0"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-lg bg-[#0866E9] dark:bg-[#FF7900] text-white font-semibold text-xs flex items-center justify-center shadow-2xs shrink-0 transition-colors">
+                {initials}
+              </div>
+            )}
+
+            <div className="min-w-0 flex-1">
+              <h1 className="text-[13.5px] font-semibold text-[#172033] dark:text-white leading-tight truncate">
+                {storeName}
+              </h1>
+              <p className="text-[10.5px] font-normal text-[#64748B] dark:text-[#94A3B8] leading-tight truncate mt-0.5">
+                {storeAddress}
+              </p>
+            </div>
+          </div>
+
+          {/* Toggle Light/Dark & Ikon Notifikasi (Area sentuh >= 44px) */}
+          <div className="flex items-center gap-1.5 shrink-0" ref={notifRef}>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.vibrate?.(10);
+                toggleTheme();
+              }}
+              aria-label={isDark ? 'Ubah ke Mode Terang' : 'Ubah ke Mode Gelap'}
+              title={isDark ? 'Mode Terang' : 'Mode Gelap'}
+              className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl bg-[#F1F4F8] dark:bg-[#070B16] hover:border-[#0866E9] dark:hover:border-[#FF7900] text-[#172033] dark:text-[#FF7900] border border-[#E2E8F0] dark:border-[#263954] flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+            >
+              {isDark ? <Sun size={17} /> : <Moon size={17} />}
+            </button>
+
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.vibrate?.(10);
+                  setIsNotifOpen((prev) => !prev);
+                }}
+                aria-label="Notifikasi"
+                aria-expanded={isNotifOpen}
+                title="Notifikasi Toko"
+                className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl bg-[#F1F4F8] dark:bg-[#070B16] hover:border-[#0866E9] dark:hover:border-[#FF7900] text-[#172033] dark:text-white border border-[#E2E8F0] dark:border-[#263954] flex items-center justify-center active:scale-95 transition-all cursor-pointer relative"
+              >
+                <Bell size={17} />
+                {hasAlerts && (
+                  <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#0866E9] dark:bg-[#FF7900] ring-2 ring-white dark:ring-[#111D30]" />
+                )}
+              </button>
+
+              {isNotifOpen && (
+                <div className="absolute right-0 mt-1.5 w-72 sm:w-80 bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-2xl shadow-xl overflow-hidden z-50">
+                  <div className="px-3 py-2 border-b border-[#E2E8F0] dark:border-[#263954] flex items-center justify-between">
+                    <span className="text-[13px] font-semibold text-[#172033] dark:text-white">
+                      Notifikasi Sistem
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsNotifOpen(false)}
+                      className="min-w-[44px] min-h-[44px] w-11 h-11 -mr-2 -my-1.5 rounded-xl text-[#64748B] dark:text-[#94A3B8] flex items-center justify-center hover:text-[#172033] dark:hover:text-white cursor-pointer"
+                      aria-label="Tutup notifikasi"
+                    >
+                      <X size={15} />
+                    </button>
+                  </div>
+
+                  <div className="divide-y divide-[#E2E8F0] dark:divide-[#263954] text-[12.5px]">
+                    {/* Status Shift */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsNotifOpen(false);
+                        navigate('/shift');
+                      }}
+                      className="w-full min-h-[44px] text-left px-3 py-2 hover:bg-[#F1F4F8] dark:hover:bg-[#263954]/40 flex items-start gap-2 transition-colors cursor-pointer"
+                    >
+                      <Clock
+                        size={15}
+                        className={`shrink-0 mt-0.5 ${
+                          activeShift
+                            ? 'text-emerald-600 dark:text-emerald-400'
+                            : 'text-[#64748B] dark:text-[#94A3B8]'
+                        }`}
+                      />
+                      <div className="min-w-0">
+                        <p className="font-medium text-[#172033] dark:text-white leading-snug">
+                          {activeShift ? 'Shift Kasir Sedang Buka' : 'Shift Kasir Belum Dibuka'}
+                        </p>
+                        <p className="text-[11px] font-normal text-[#64748B] dark:text-[#94A3B8] mt-0.5 leading-snug">
+                          {activeShift
+                            ? 'Ketuk untuk lihat rincian shift kasir saat ini.'
+                            : 'Ketuk untuk membuka shift kasir sebelum transaksi.'}
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Status Stok Menipis */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsNotifOpen(false);
+                        navigate('/products');
+                      }}
+                      className="w-full min-h-[44px] text-left px-3 py-2 hover:bg-[#F1F4F8] dark:hover:bg-[#263954]/40 flex items-start gap-2 transition-colors cursor-pointer"
+                    >
+                      {lowStockCount > 0 ? (
+                        <AlertTriangle
+                          size={15}
+                          className="shrink-0 mt-0.5 text-amber-600 dark:text-amber-400"
+                        />
+                      ) : (
+                        <CheckCircle2
+                          size={15}
+                          className="shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400"
+                        />
+                      )}
+                      <div className="min-w-0">
+                        <p className="font-medium text-[#172033] dark:text-white tabular-nums leading-snug">
+                          {lowStockCount > 0
+                            ? `${lowStockCount} Produk Stok Menipis`
+                            : 'Stok Produk Aman'}
+                        </p>
+                        <p className="text-[11px] font-normal text-[#64748B] dark:text-[#94A3B8] mt-0.5 leading-snug">
+                          {lowStockCount > 0
+                            ? 'Ketuk untuk cek daftar barang yang perlu restok.'
+                            : 'Semua stok barang masih berada di atas batas minimum.'}
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Status Lisensi */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsNotifOpen(false);
+                        openActivationModal();
+                      }}
+                      className="w-full min-h-[44px] text-left px-3 py-2 hover:bg-[#F1F4F8] dark:hover:bg-[#263954]/40 flex items-start gap-2 transition-colors cursor-pointer"
+                    >
+                      <KeyRound
+                        size={15}
+                        className={`shrink-0 mt-0.5 ${
+                          isActivated
+                            ? 'text-emerald-600 dark:text-emerald-400'
+                            : 'text-[#0866E9] dark:text-[#FF7900]'
+                        }`}
+                      />
+                      <div className="min-w-0">
+                        <p className="font-medium text-[#172033] dark:text-white tabular-nums leading-snug">
+                          {isActivated
+                            ? 'Lisensi Penuh Aktif'
+                            : `Mode Demo (Sisa ${remainingTransactions} dari ${maxDemoTransactions} Transaksi)`}
+                        </p>
+                        <p className="text-[11px] font-normal text-[#64748B] dark:text-[#94A3B8] mt-0.5 leading-snug">
+                          {isActivated
+                            ? 'Aplikasi teraktivasi permanen di perangkat ini.'
+                            : 'Ketuk untuk memasukkan kode aktivasi lisensi.'}
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Banner Mode Demo Ringkas */}
+      {!isActivated && !isDemoExpired && (
+        <button
+          type="button"
+          onClick={openActivationModal}
+          className="flex-none shrink-0 w-full bg-amber-50 dark:bg-[#111D30] hover:bg-amber-100/80 dark:hover:bg-[#192842] border-b border-[#E2E8F0] dark:border-[#263954] py-1 px-3 flex items-center justify-center gap-1.5 text-[11px] leading-tight font-medium text-amber-800 dark:text-amber-300 transition-colors cursor-pointer"
+        >
+          <KeyRound size={11} className="shrink-0 text-amber-600 dark:text-[#FF7900]" />
+          <span className="truncate tabular-nums">
+            Mode Demo (Sisa {remainingTransactions} dari {maxDemoTransactions} Transaksi) •{' '}
+            <span className="underline underline-offset-2 font-semibold text-[#0866E9] dark:text-[#FF7900]">
+              Aktivasi Sekarang
             </span>
-          </button>
-        )}
+          </span>
+        </button>
+      )}
+
+      {/* Area Konten Utama */}
+      <main className="flex-1 min-h-0 min-w-0 w-full overflow-hidden flex flex-col">
         <div className="w-full flex-1 min-h-0 max-w-7xl mx-auto flex flex-col overflow-hidden">
           <Outlet />
         </div>
       </main>
+
+      {/* Bottom Navigation 1 Baris */}
+      <BottomNavigation />
+
       <ActivationModal />
-
-      {/* Navigasi Adaptif: Bottom Bar di Mobile (< md), Left Navigation Rail (w-20) di Tablet & PC (md: ke atas) */}
-      <nav className="order-2 md:order-1 flex-none w-full md:w-20 md:h-full bg-white dark:bg-slate-900 border-t md:border-t-0 md:border-r border-slate-200 dark:border-slate-800 px-2 py-1.5 md:px-1.5 md:py-4 z-40 flex flex-col justify-center md:justify-start md:items-center md:gap-4 transition-colors duration-200">
-        {/* Brand Badge khusus Tablet & PC */}
-        <div className="hidden md:flex flex-col items-center gap-1 pb-2 border-b border-slate-100 dark:border-slate-800 w-full">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0866E9] to-blue-500 text-white font-semibold text-xs flex items-center justify-center shadow-xs">
-            POS
-          </div>
-          <span className="text-[8px] font-medium text-slate-400 dark:text-slate-500 tracking-widest uppercase">
-            JacS v4
-          </span>
-        </div>
-
-        <div className="max-w-3xl mx-auto w-full grid grid-cols-5 gap-1 md:max-w-none md:mx-0 md:flex md:flex-col md:gap-2">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = isRouteActive(item.path);
-            return (
-              <button
-                key={item.path}
-                onClick={() => navigate(item.path)}
-                className={`flex flex-col items-center justify-center py-1 md:py-2.5 px-1 rounded-xl transition-all duration-200 cursor-pointer ${
-                  isActive
-                    ? 'border border-blue-500/80 dark:border-blue-500/70 ring-2 ring-blue-500/20 dark:ring-blue-500/25 shadow-[0_0_12px_rgba(59,130,246,0.35)] bg-blue-50/90 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 font-semibold'
-                    : 'border border-transparent text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 font-medium'
-                }`}
-              >
-                <Icon className="w-4 h-4 md:w-5 md:h-5 mb-0.5 md:mb-1" />
-                <span className="text-[9px] md:text-[9.5px] tracking-tight truncate w-full text-center">
-                  {item.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </nav>
     </div>
   );
 };

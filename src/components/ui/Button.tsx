@@ -4,8 +4,8 @@ export const Button = ({ children, className, disabled, ...props }: React.Button
   <button 
     disabled={disabled}
     className={cn(
-      "px-4 py-2 rounded-xl font-bold text-sm transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100",
-      "bg-[var(--primary-accent)] text-white hover:opacity-90 shadow-sm",
+      "min-h-[44px] px-3.5 py-2 rounded-xl font-medium text-[12.5px] border border-transparent transition-all active:scale-[0.98] disabled:opacity-45 disabled:active:scale-100 disabled:cursor-not-allowed cursor-pointer",
+      "bg-[#0866E9] hover:bg-[#0758CC] text-white shadow-2xs",
       className
     )} 
     {...props}

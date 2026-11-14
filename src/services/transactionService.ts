@@ -24,6 +24,10 @@ export const transactionService = {
 
       const createdAt = new Date();
       const activeShift = await shiftService.getActiveShift();
+      const activeShiftId = activeShift?.id;
+      if (activeShiftId == null) {
+        throw new Error('Tidak ada shift kasir aktif. Silakan buka shift terlebih dahulu.');
+      }
 
       return await db.transaction('rw', [db.transactions, db.transaction_items, db.payments, db.inventory_movements, db.products, db.sync_queue], async () => {
         // 1. Pro Mode Stock Validation & Update
@@ -44,14 +48,8 @@ export const transactionService = {
           }
         }
 
-        // 2. Validate Shift
-        const activeShift = await db.shifts.where('status').equals('OPEN').first();
-        if (!activeShift) {
-          throw new Error('Tidak ada shift kasir aktif. Silakan buka shift terlebih dahulu.');
-        }
-
-        // 3. Save Header
-        const newTransaction: Transaction = { id, createdAt, shiftId: activeShift.id!, ...transaction };
+        // 2. Save Header
+        const newTransaction: Transaction = { id, createdAt, shiftId: activeShiftId, ...transaction };
         await db.transactions.add(newTransaction);
 
         // 3. Save Items

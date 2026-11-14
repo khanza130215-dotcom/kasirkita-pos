@@ -341,26 +341,26 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-slate-900/50 dark:bg-black/70 backdrop-blur-xs transition-opacity duration-200"
+      className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 backdrop-blur-xs transition-opacity duration-200"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full md:max-w-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-t-3xl md:rounded-2xl p-4 shadow-2xl flex flex-col gap-3 max-h-[88dvh] overflow-hidden"
+        className="w-full md:max-w-2xl bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-t-2xl md:rounded-2xl p-3.5 shadow-2xl flex flex-col gap-2.5 max-h-[88dvh] overflow-hidden"
       >
         {/* Drag handle mobile */}
-        <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto md:hidden shrink-0" />
+        <div className="w-10 h-1 bg-[#E2E8F0] dark:bg-[#263954] rounded-full mx-auto md:hidden shrink-0" />
 
         {/* Header Modal */}
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5 shrink-0">
-          <div className="flex items-center gap-2.5">
+        <div className="flex items-center justify-between border-b border-[#E2E8F0] dark:border-[#263954] pb-2.5 shrink-0">
+          <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/70 flex items-center justify-center shrink-0">
               <FileSpreadsheet size={16} />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-slate-800 dark:text-slate-100 leading-tight">
+              <h3 className="text-[14px] font-semibold text-[#172033] dark:text-white leading-tight">
                 Import Master Barang
               </h3>
-              <p className="text-[10.5px] font-normal text-slate-500 dark:text-slate-400">
+              <p className="text-[11px] font-normal text-[#64748B] dark:text-[#94A3B8] leading-tight mt-0.5">
                 Sinkron langsung ke halaman Produk & Kasir
               </p>
             </div>
@@ -368,7 +368,7 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+            className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] text-[#64748B] dark:text-[#94A3B8] hover:text-[#172033] dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer"
             aria-label="Tutup modal import"
           >
             <X size={16} />
@@ -376,58 +376,58 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
         </div>
 
         {/* Konten Scrollable */}
-        <div className="flex-1 min-h-0 overflow-y-auto space-y-3 pr-0.5">
+        <div className="flex-1 min-h-0 overflow-y-auto space-y-2.5 pr-0.5">
           {/* Langkah 1: Template & Sumber Data */}
-          <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700 rounded-2xl p-3 space-y-2.5">
+          <div className="bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-2.5 space-y-2">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <span className="text-[12px] font-semibold text-[#172033] dark:text-white">
                 1. Sumber Data (CSV / Excel)
               </span>
               <button
                 type="button"
                 onClick={handleDownloadTemplate}
-                className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-[10px] font-medium flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+                className="min-h-[44px] px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#111D30] border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-[11px] font-medium flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
               >
-                <Download size={12} />
+                <Download size={13} />
                 <span>Download Template CSV</span>
               </button>
             </div>
 
             {/* Tab Pilihan Input */}
-            <div className="grid grid-cols-2 gap-1.5 bg-slate-200/70 dark:bg-slate-900 p-1 rounded-xl">
+            <div className="grid grid-cols-2 gap-1.5 bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] p-1 rounded-xl">
               <button
                 type="button"
                 onClick={() => setActiveTab('file')}
-                className={`py-1.5 px-2 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                className={`min-h-[44px] py-1.5 px-2 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === 'file'
-                    ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xs'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                    ? 'bg-[#0866E9] dark:bg-[#FF7900] text-white'
+                    : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#172033] dark:hover:text-white'
                 }`}
               >
-                <Upload size={13} />
+                <Upload size={14} />
                 <span>Unggah File (.csv)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('paste')}
-                className={`py-1.5 px-2 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                className={`min-h-[44px] py-1.5 px-2 rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   activeTab === 'paste'
-                    ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xs'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                    ? 'bg-[#0866E9] dark:bg-[#FF7900] text-white'
+                    : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#172033] dark:hover:text-white'
                 }`}
               >
-                <ClipboardPaste size={13} />
+                <ClipboardPaste size={14} />
                 <span>Tempel Data dari Excel</span>
               </button>
             </div>
 
             {activeTab === 'file' ? (
-              <label className="flex flex-col items-center justify-center gap-1.5 border border-dashed border-emerald-300 dark:border-emerald-700 bg-white dark:bg-slate-900 hover:bg-emerald-50/40 dark:hover:bg-slate-800/80 rounded-xl p-3 cursor-pointer transition-colors">
-                <Upload size={18} className="text-emerald-600 dark:text-emerald-400" />
-                <span className="text-xs font-medium text-slate-700 dark:text-slate-200 text-center">
+              <label className="flex flex-col items-center justify-center gap-1 border border-dashed border-emerald-400 dark:border-emerald-700 bg-white dark:bg-[#111D30] hover:bg-emerald-50/40 dark:hover:bg-[#111D30]/80 rounded-xl p-3 cursor-pointer transition-colors">
+                <Upload size={16} className="text-emerald-600 dark:text-emerald-400" />
+                <span className="text-[12.5px] font-medium text-[#172033] dark:text-white text-center leading-tight">
                   {fileName ? fileName : 'Pilih file .csv dari perangkat Anda'}
                 </span>
-                <span className="text-[10px] text-slate-400 text-center">
+                <span className="text-[10.5px] text-[#64748B] dark:text-[#94A3B8] text-center leading-tight">
                   Kolom: No_Urut, Barcode_ID, Nama_Produk_Detail_Size, Qty_Stok, Harga_Satuan, Total_Harga
                 </span>
                 <input
@@ -449,7 +449,7 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
                   placeholder={
                     'Tempel baris langsung dari Excel/Spreadsheet (6 kolom):\n1\t8991234501\tKopi Susu 250ml\t20\tRp 18.000\tRp 360.000'
                   }
-                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-[11px] font-mono text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-emerald-400 resize-none"
+                  className="w-full bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-2.5 text-xs font-mono text-[#172033] dark:text-white placeholder:text-[#64748B] dark:placeholder:text-[#94A3B8] outline-none focus:border-[#0866E9] dark:focus:border-[#FF7900] resize-none"
                 />
               </div>
             )}
@@ -457,12 +457,12 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
 
           {/* Langkah 2: Preview & Validasi */}
           {parsedRows.length > 0 && (
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-3 space-y-2">
+            <div className="bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-2.5 space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <span className="text-[12px] font-semibold text-[#172033] dark:text-white">
                   2. Preview & Validasi ({stats.total} Baris)
                 </span>
-                <div className="flex items-center gap-1.5 text-[10px]">
+                <div className="flex items-center gap-1.5 text-[10.5px] font-medium">
                   <span className="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/70">
                     Valid: {stats.validCount}
                   </span>
@@ -479,9 +479,9 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
                 </div>
               </div>
 
-              <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden max-h-40 overflow-y-auto">
-                <table className="w-full text-left border-collapse text-[10.5px]">
-                  <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700 sticky top-0">
+              <div className="border border-[#E2E8F0] dark:border-[#263954] rounded-xl overflow-hidden max-h-40 overflow-y-auto">
+                <table className="w-full text-left border-collapse text-[11.5px]">
+                  <thead className="bg-[#F1F4F8] dark:bg-[#070B16] text-[#64748B] dark:text-[#94A3B8] border-b border-[#E2E8F0] dark:border-[#263954] sticky top-0">
                     <tr>
                       <th className="py-1.5 px-2 font-medium">Barcode/SKU</th>
                       <th className="py-1.5 px-2 font-medium">Nama Produk</th>
@@ -490,36 +490,36 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
                       <th className="py-1.5 px-2 font-medium text-center">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#263954]">
                     {parsedRows.map((row) => (
                       <tr
                         key={`${row.rowIndex}-${row.barcode}`}
                         className={!row.isValid ? 'bg-rose-50/50 dark:bg-rose-950/30' : ''}
                       >
-                        <td className="py-1.5 px-2 font-mono text-[10px] text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                        <td className="py-1.5 px-2 font-mono text-[10.5px] text-[#64748B] dark:text-[#94A3B8] whitespace-nowrap">
                           {row.barcode}
                           {row.autoGeneratedSku && (
-                            <span className="ml-1 text-[8.5px] text-blue-600 dark:text-blue-400">(Auto)</span>
+                            <span className="ml-1 text-[10.5px] text-[#0866E9] dark:text-[#FF7900]">(Auto)</span>
                           )}
                         </td>
-                        <td className="py-1.5 px-2 text-slate-800 dark:text-slate-100 truncate max-w-[140px]">
+                        <td className="py-1.5 px-2 text-[#172033] dark:text-white truncate max-w-[140px]">
                           {row.name || '-'}
                         </td>
-                        <td className="py-1.5 px-2 text-right tabular-nums text-slate-700 dark:text-slate-300">
+                        <td className="py-1.5 px-2 text-right tabular-nums text-[#64748B] dark:text-[#94A3B8]">
                           {row.qty}
                         </td>
-                        <td className="py-1.5 px-2 text-right tabular-nums text-slate-800 dark:text-slate-100 whitespace-nowrap">
+                        <td className="py-1.5 px-2 text-right tabular-nums text-[#172033] dark:text-white whitespace-nowrap">
                           {formatRupiah(row.price)}
                         </td>
                         <td className="py-1.5 px-2 text-center whitespace-nowrap">
                           {!row.isValid ? (
-                            <span className="text-[9px] text-rose-600 dark:text-rose-400">{row.errorMsg}</span>
+                            <span className="text-[10.5px] text-rose-600 dark:text-rose-400">{row.errorMsg}</span>
                           ) : row.matchedProduct ? (
-                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/70">
+                            <span className="text-[10.5px] px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/70">
                               Duplikat
                             </span>
                           ) : (
-                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/70">
+                            <span className="text-[10.5px] px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/70">
                               Baru
                             </span>
                           )}
@@ -533,55 +533,55 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
           )}
 
           {/* Langkah 3: Opsi Duplikat */}
-          <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700 rounded-2xl p-3 space-y-2">
-            <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+          <div className="bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-2.5 space-y-1.5">
+            <span className="text-[12px] font-semibold text-[#172033] dark:text-white block">
               3. Penanganan Data Duplikat
             </span>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setDuplicateMode('overwrite')}
-                className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`min-h-[44px] p-2 rounded-xl border text-left transition-all cursor-pointer ${
                   duplicateMode === 'overwrite'
-                    ? 'bg-white dark:bg-slate-900 border-emerald-500 ring-1 ring-emerald-200 dark:ring-emerald-500/30 text-slate-800 dark:text-slate-100'
-                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600'
+                    ? 'bg-white dark:bg-[#111D30] border-[#0866E9] dark:border-[#FF7900] text-[#172033] dark:text-white'
+                    : 'bg-white dark:bg-[#111D30] border-[#E2E8F0] dark:border-[#263954] text-[#64748B] dark:text-[#94A3B8] hover:border-[#0866E9]/50 dark:hover:border-[#FF7900]/50'
                 }`}
               >
                 <div className="flex items-center gap-1.5">
                   <CheckCircle2
-                    size={13}
+                    size={14}
                     className={
-                      duplicateMode === 'overwrite' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-300 dark:text-slate-600'
+                      duplicateMode === 'overwrite' ? 'text-[#0866E9] dark:text-[#FF7900]' : 'text-[#64748B]/40 dark:text-[#94A3B8]/40'
                     }
                   />
-                  <span className="text-[11px] font-medium">Timpa & Update Stok/Harga</span>
+                  <span className="text-[11.5px] font-medium leading-tight">Timpa & Update Stok/Harga</span>
                 </div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setDuplicateMode('skip')}
-                className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`min-h-[44px] p-2 rounded-xl border text-left transition-all cursor-pointer ${
                   duplicateMode === 'skip'
-                    ? 'bg-white dark:bg-slate-900 border-emerald-500 ring-1 ring-emerald-200 dark:ring-emerald-500/30 text-slate-800 dark:text-slate-100'
-                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600'
+                    ? 'bg-white dark:bg-[#111D30] border-[#0866E9] dark:border-[#FF7900] text-[#172033] dark:text-white'
+                    : 'bg-white dark:bg-[#111D30] border-[#E2E8F0] dark:border-[#263954] text-[#64748B] dark:text-[#94A3B8] hover:border-[#0866E9]/50 dark:hover:border-[#FF7900]/50'
                 }`}
               >
                 <div className="flex items-center gap-1.5">
                   <CheckCircle2
-                    size={13}
+                    size={14}
                     className={
-                      duplicateMode === 'skip' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-300 dark:text-slate-600'
+                      duplicateMode === 'skip' ? 'text-[#0866E9] dark:text-[#FF7900]' : 'text-[#64748B]/40 dark:text-[#94A3B8]/40'
                     }
                   />
-                  <span className="text-[11px] font-medium">Lewati Data Duplikat</span>
+                  <span className="text-[11.5px] font-medium leading-tight">Lewati Data Duplikat</span>
                 </div>
               </button>
             </div>
           </div>
 
           {errorBanner && (
-            <div className="flex items-center gap-2 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/70 text-rose-700 dark:text-rose-400 text-xs px-3 py-2 rounded-xl">
+            <div className="flex items-center gap-2 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/70 text-rose-700 dark:text-rose-400 text-[11.5px] px-3 py-2 rounded-xl">
               <AlertTriangle size={14} className="shrink-0" />
               <span>{errorBanner}</span>
             </div>
@@ -589,11 +589,11 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
         </div>
 
         {/* Tombol Simpan Massal */}
-        <div className="pt-1 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2 shrink-0">
+        <div className="pt-2.5 border-t border-[#E2E8F0] dark:border-[#263954] flex items-center justify-end gap-2 shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
+            className="min-h-[44px] px-4 py-2 rounded-xl border border-[#E2E8F0] dark:border-[#263954] bg-[#F1F4F8] dark:bg-[#070B16] text-[12.5px] font-medium text-[#172033] dark:text-white hover:opacity-85 cursor-pointer"
           >
             Batal
           </button>
@@ -601,9 +601,9 @@ export const ImportMasterModal: React.FC<ImportMasterModalProps> = ({
             type="button"
             disabled={isSaving || stats.toSyncCount === 0}
             onClick={handleImportSubmit}
-            className="flex-1 md:flex-none px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] transition-all disabled:opacity-45 disabled:cursor-not-allowed cursor-pointer"
+            className="flex-1 md:flex-none min-h-[44px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[12.5px] font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-45 disabled:cursor-not-allowed cursor-pointer"
           >
-            <FileSpreadsheet size={14} />
+            <FileSpreadsheet size={15} />
             <span>
               {isSaving
                 ? 'Menyinkronkan...'

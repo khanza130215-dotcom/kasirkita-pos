@@ -7,10 +7,24 @@ import { shiftService } from '../services/shiftService';
 import { seedInitialData } from '../db/seedData';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
+import { useAppMode } from '../context/AppModeContext';
 import { BarcodeScannerModal } from '../components/scanner/BarcodeScannerModal';
 import { ProductFormModal } from '../components/products/ProductFormModal';
 import { PaymentModal } from '../components/payment/PaymentModal';
-import { Search, Scan, Plus, Minus, Trash2, ShoppingCart, ArrowRight, Package, Zap, Unlock, Banknote } from 'lucide-react';
+import {
+  Search,
+  Scan,
+  Plus,
+  Minus,
+  Trash2,
+  ShoppingCart,
+  Wallet,
+  Package,
+  Zap,
+  Unlock,
+  Banknote,
+  X,
+} from 'lucide-react';
 import { formatRupiah } from '../utils/paymentUtils';
 
 const isSameCalendarDay = (a: Date, b: Date): boolean =>
@@ -40,7 +54,8 @@ export const KasirPage = () => {
   const [shiftError, setShiftError] = useState<string | null>(null);
   const [scannedBarcode, setScannedBarcode] = useState('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const { cart, addToCart, increaseQuantity, decreaseQuantity, removeFromCart, getCartSubtotal } = useCart();
+  const { cart, addToCart, increaseQuantity, decreaseQuantity, removeFromCart, getCartSubtotal, getTotalQuantity } = useCart();
+  const { mode } = useAppMode();
 
   const hasTodayOpenShift = Boolean(
     shiftQuery.shift && isSameCalendarDay(new Date(shiftQuery.shift.openedAt), new Date())
@@ -186,27 +201,34 @@ export const KasirPage = () => {
     return [...favList, ...extraBestSellers].slice(0, 8);
   }, [activeProducts, favorites]);
 
+  const totalItems = getTotalQuantity();
+  const cartSubtotal = getCartSubtotal();
+
   return (
-    <div className="h-full flex flex-col md:grid md:grid-cols-12 md:gap-4 p-2.5 md:p-4 overflow-hidden select-none bg-slate-50 dark:bg-slate-950 gap-2 relative transition-colors duration-200">
+    <div className="h-full w-full flex flex-col md:grid md:grid-cols-12 md:gap-3 p-2.5 sm:p-3 overflow-hidden select-none bg-[#F1F4F8] dark:bg-[#070B16] text-[#172033] dark:text-white gap-2 relative transition-colors duration-200">
       {/* Toast Feedback */}
       {toastMessage && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-slate-900 dark:bg-slate-800 text-white text-xs px-4 py-2 rounded-xl shadow-xl border border-slate-700/50 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
-          <span>{toastMessage}</span>
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#172033] dark:bg-[#111D30] text-white text-xs px-3.5 py-2 rounded-xl shadow-xl border border-[#263954] flex items-center gap-2 max-w-[90vw]">
+          <span className="truncate">{toastMessage}</span>
         </div>
       )}
 
       {/* Kolom Kiri (Tablet/PC: Daftar Produk + Pencarian; Mobile: Pencarian + Produk Cepat) */}
-      <div className="flex flex-col gap-1.5 shrink-0 md:shrink md:col-span-7 md:min-h-0 md:h-full md:overflow-hidden relative">
-        {/* 1. Bar Pencarian, Instant Dropdown & Scan Barcode */}
-        <div className="flex flex-col gap-1 shrink-0 relative">
+      <div className="flex flex-col gap-1.5 shrink-0 md:shrink md:col-span-7 md:min-h-0 md:h-full md:overflow-hidden relative min-w-0">
+        {/* 1. Area Pencarian Produk & Scanner Barcode */}
+        <div className="flex flex-col gap-1.5 shrink-0 relative">
           <div className="flex items-center gap-1.5">
-            <div className="flex-grow flex items-center gap-2 bg-white dark:bg-slate-900 px-2.5 py-1.5 md:py-2 rounded-xl border border-blue-400 dark:border-blue-500/60 shadow-[0_0_10px_rgba(59,130,246,0.15)] transition-all">
-              <Search className="w-3.5 h-3.5 text-[#0866E9] dark:text-blue-400 shrink-0" strokeWidth={2.5} />
+            <div className="flex-1 min-w-0 min-h-[44px] h-11 flex items-center gap-2 bg-white dark:bg-[#111D30] px-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#263954] focus-within:border-[#0866E9] dark:focus-within:border-[#FF7900] shadow-2xs transition-colors">
+              <Search
+                className="w-4 h-4 text-[#0866E9] dark:text-[#FF7900] shrink-0"
+                strokeWidth={2.25}
+              />
               <input
                 ref={searchInputRef}
-                className="w-full bg-transparent outline-none text-xs font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500 text-slate-900 dark:text-slate-100 tracking-wide"
-                placeholder="CARI NAMA ATAU SCAN BARCODE (ENTER)..."
+                type="text"
+                aria-label="Cari atau Scan Barang"
+                className="w-full min-w-0 bg-transparent outline-none text-[12.5px] font-normal placeholder:text-[#64748B] dark:placeholder:text-[#94A3B8] text-[#172033] dark:text-white"
+                placeholder="Cari atau Scan Barang..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 onKeyDown={handleSearchKeyDown}
@@ -214,31 +236,34 @@ export const KasirPage = () => {
               {searchTerm.length > 0 && (
                 <button
                   type="button"
+                  aria-label="Bersihkan pencarian"
                   onClick={() => {
                     setSearchTerm('');
                     searchInputRef.current?.focus();
                   }}
-                  className="text-[10px] font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-1 cursor-pointer"
+                  className="min-w-[44px] min-h-[44px] w-11 h-11 -mr-2 rounded-xl flex items-center justify-center text-[#64748B] hover:text-[#172033] dark:hover:text-white cursor-pointer shrink-0 transition-colors"
                 >
-                  ✕
+                  <X size={15} />
                 </button>
               )}
             </div>
 
             <button
+              type="button"
               onClick={() => setShowScanner(true)}
-              className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-white dark:bg-slate-900 border border-blue-300 dark:border-blue-500/50 shadow-[0_0_8px_rgba(59,130,246,0.18)] flex items-center justify-center text-[#0866E9] dark:text-blue-400 active:scale-95 transition-all cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-800 shrink-0"
-              title="Scan Kamera"
+              aria-label="Scan Barcode Kamera"
+              title="Scan Barcode Kamera"
+              className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] hover:border-[#0866E9] dark:hover:border-[#FF7900] shadow-2xs flex items-center justify-center text-[#0866E9] dark:text-[#FF7900] active:scale-95 transition-all cursor-pointer shrink-0"
             >
-              <Scan className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
+              <Scan className="w-[18px] h-[18px]" strokeWidth={2.25} />
             </button>
           </div>
 
           {/* Instant Search Dropdown Melayang */}
           {searchTerm.trim().length > 0 && (
-            <div className="absolute top-10 md:top-11 left-0 right-0 z-30 bg-white dark:bg-slate-900 rounded-xl border border-blue-200 dark:border-slate-700 shadow-xl overflow-hidden max-h-[240px] flex flex-col">
-              <div className="px-2.5 py-1.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 flex justify-between items-center shrink-0">
-                <span className="text-[9px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+            <div className="absolute top-12 left-0 right-0 z-30 bg-white dark:bg-[#111D30] rounded-xl border border-[#E2E8F0] dark:border-[#263954] shadow-xl overflow-hidden max-h-[250px] flex flex-col">
+              <div className="px-3 py-1.5 border-b border-[#E2E8F0] dark:border-[#263954] bg-[#F1F4F8]/70 dark:bg-[#070B16]/60 flex justify-between items-center shrink-0">
+                <span className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8] tabular-nums">
                   Hasil Pencarian ({filteredProducts.length})
                 </span>
                 <button
@@ -247,14 +272,14 @@ export const KasirPage = () => {
                     setSearchTerm('');
                     searchInputRef.current?.focus();
                   }}
-                  className="text-[9px] font-semibold text-[#0866E9] dark:text-blue-400 cursor-pointer"
+                  className="min-h-[44px] px-2 text-xs font-medium text-[#0866E9] dark:text-[#FF7900] cursor-pointer flex items-center"
                 >
-                  TUTUP
+                  Tutup
                 </button>
               </div>
-              <div className="overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+              <div className="overflow-y-auto divide-y divide-[#E2E8F0] dark:divide-[#263954]">
                 {filteredProducts.length === 0 ? (
-                  <div className="p-3 text-center text-[11px] text-slate-400">
+                  <div className="p-3.5 text-center text-[12px] text-[#64748B] dark:text-[#94A3B8]">
                     Barang "{searchTerm}" tidak ditemukan
                   </div>
                 ) : (
@@ -265,32 +290,33 @@ export const KasirPage = () => {
                         type="button"
                         key={p.id}
                         onClick={() => handleQuickAddProduct(p, true)}
-                        className={`w-full text-left px-2.5 py-2 flex justify-between items-center gap-2 transition-colors ${
+                        className={`w-full min-h-[44px] text-left px-3 py-2 flex justify-between items-center gap-2.5 transition-colors ${
                           isOut
-                            ? 'bg-slate-50/70 dark:bg-slate-900/60 opacity-60 cursor-not-allowed'
-                            : 'hover:bg-blue-50 dark:hover:bg-slate-800/80 active:bg-blue-100/60 cursor-pointer'
+                            ? 'bg-slate-50/70 dark:bg-[#070B16]/40 opacity-60 cursor-not-allowed'
+                            : 'hover:bg-blue-50/60 dark:hover:bg-[#263954]/40 active:bg-blue-100/60 cursor-pointer'
                         }`}
                       >
                         <div className="min-w-0 flex-1">
-                          <p className="font-medium text-xs text-slate-900 dark:text-slate-100 truncate leading-snug">
+                          <p className="font-medium text-[12.5px] text-[#172033] dark:text-white truncate leading-snug">
                             {p.name}
                           </p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-[9.5px] font-mono text-slate-400 truncate">
+                          <div className="flex items-center gap-1.5 mt-0.5 text-[10.5px] text-[#64748B] dark:text-[#94A3B8]">
+                            <span className="font-mono truncate">
                               {p.barcode || p.sku}
                             </span>
+                            <span aria-hidden="true">·</span>
                             <span
-                              className={`text-[9px] font-medium px-1.5 py-0.2 rounded ${
+                              className={
                                 isOut
-                                  ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
-                                  : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400'
-                              }`}
+                                  ? 'text-rose-600 dark:text-rose-400 font-medium'
+                                  : 'text-emerald-600 dark:text-emerald-400 font-medium tabular-nums'
+                              }
                             >
-                              {isOut ? 'Stok Habis' : `Stok: ${p.openingStock}`}
+                              {isOut ? 'Stok Habis' : `Stok ${p.openingStock}`}
                             </span>
                           </div>
                         </div>
-                        <span className="font-semibold text-xs text-[#0866E9] dark:text-blue-400 tabular-nums whitespace-nowrap shrink-0">
+                        <span className="font-semibold text-[12.5px] text-[#0866E9] dark:text-[#FF7900] tabular-nums whitespace-nowrap shrink-0">
                           {formatRupiah(p.sellingPrice)}
                         </span>
                       </button>
@@ -301,11 +327,11 @@ export const KasirPage = () => {
             </div>
           )}
 
-          {/* 2. Baris Chip "Produk Cepat" (Horizontal Scroll 1x Tap) */}
+          {/* 2. Baris Pintasan "Produk Cepat" (Horizontal Scroll 1x Tap) */}
           {quickProducts.length > 0 && (
-            <div className="flex items-center overflow-x-auto gap-1.5 no-scrollbar py-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              <span className="shrink-0 inline-flex items-center gap-0.5 text-[9px] font-medium uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/70 px-1.5 py-1 rounded-lg">
-                <Zap size={10} className="fill-amber-500 text-amber-500" />
+            <div className="flex items-center overflow-x-auto gap-1.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <span className="shrink-0 inline-flex items-center gap-1 text-[10.5px] font-medium text-amber-600 dark:text-[#FF7900] pr-0.5">
+                <Zap size={11} className="fill-current" />
                 Cepat
               </span>
               {quickProducts.map(p => (
@@ -313,12 +339,12 @@ export const KasirPage = () => {
                   type="button"
                   key={p.id}
                   onClick={() => handleQuickAddProduct(p)}
-                  className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-[10px] hover:border-blue-400 dark:hover:border-blue-500/50 dark:hover:bg-slate-800/80 active:scale-95 transition-all shadow-2xs cursor-pointer"
+                  className="shrink-0 min-h-[44px] flex items-center gap-1.5 px-2.5 py-1.5 bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-xl text-xs hover:border-[#0866E9] dark:hover:border-[#FF7900] active:scale-95 transition-all shadow-2xs cursor-pointer"
                 >
-                  <span className="font-medium text-slate-700 dark:text-slate-200 truncate max-w-[115px]">
+                  <span className="font-medium text-[#172033] dark:text-white truncate max-w-[115px]">
                     {p.name}
                   </span>
-                  <span className="font-semibold text-[#0866E9] dark:text-blue-400 tabular-nums whitespace-nowrap">
+                  <span className="font-semibold text-[#0866E9] dark:text-[#FF7900] tabular-nums whitespace-nowrap">
                     {formatRupiah(p.sellingPrice)}
                   </span>
                 </button>
@@ -328,26 +354,26 @@ export const KasirPage = () => {
         </div>
 
         {/* Katalog Produk Split-View (Khusus Tablet & PC md: ke atas) */}
-        <div className="hidden md:flex md:flex-1 md:min-h-0 md:flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs overflow-hidden transition-colors">
-          <div className="px-3.5 py-2.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 flex items-center justify-between gap-2 shrink-0">
-            <div className="flex items-center gap-2">
-              <h2 className="text-xs font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-tight">
+        <div className="hidden md:flex md:flex-1 md:min-h-0 md:flex-col bg-white dark:bg-[#111D30] rounded-xl border border-[#E2E8F0] dark:border-[#263954] shadow-2xs overflow-hidden transition-colors">
+          <div className="px-3 py-2 border-b border-[#E2E8F0] dark:border-[#263954] flex items-center justify-between gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <h2 className="text-[13.5px] font-semibold text-[#172033] dark:text-white tracking-tight">
                 Daftar Produk
               </h2>
-              <span className="bg-blue-50 dark:bg-blue-950/60 text-[#0866E9] dark:text-blue-400 border border-blue-200/70 dark:border-blue-800/70 px-2 py-0.5 rounded-full text-[10px] font-medium tabular-nums">
-                {desktopCatalogProducts.length} Item
+              <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] tabular-nums">
+                · {desktopCatalogProducts.length} item
               </span>
             </div>
-            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-1 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {categories.map(cat => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-2.5 py-1 rounded-full text-[10px] font-medium whitespace-nowrap transition-all cursor-pointer ${
+                  className={`min-h-[44px] px-2.5 py-1 rounded-lg text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer ${
                     selectedCategory === cat
-                      ? 'bg-[#0866E9] text-white shadow-2xs'
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500/50'
+                      ? 'bg-[#0866E9] dark:bg-[#FF7900] text-white'
+                      : 'bg-[#F1F4F8] dark:bg-[#070B16] text-[#172033] dark:text-slate-300 border border-[#E2E8F0] dark:border-[#263954] hover:border-[#0866E9] dark:hover:border-[#FF7900]'
                   }`}
                 >
                   {cat}
@@ -356,14 +382,14 @@ export const KasirPage = () => {
             </div>
           </div>
 
-          <div className="flex-1 min-h-0 overflow-y-auto p-3 custom-scrollbar">
+          <div className="flex-1 min-h-0 overflow-y-auto p-2.5">
             {desktopCatalogProducts.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center gap-2 text-slate-400 py-10">
-                <Package className="w-8 h-8 text-slate-300 dark:text-slate-600" />
-                <p className="text-xs font-medium uppercase tracking-wider">Produk tidak ditemukan</p>
+              <div className="h-full flex flex-col items-center justify-center gap-2 text-[#64748B] dark:text-[#94A3B8] py-8">
+                <Package className="w-7 h-7 opacity-40" />
+                <p className="text-xs font-medium">Produk tidak ditemukan</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
                 {desktopCatalogProducts.map(p => {
                   const isOutOfStock = p.openingStock <= 0;
                   return (
@@ -375,37 +401,37 @@ export const KasirPage = () => {
                         navigator.vibrate?.(15);
                         addToCart(p);
                       }}
-                      className={`text-left p-3 rounded-xl border transition-all flex flex-col justify-between gap-2 ${
+                      className={`text-left p-2.5 rounded-xl border transition-all flex flex-col justify-between gap-1.5 min-h-[44px] ${
                         isOutOfStock
-                          ? 'bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 opacity-55 cursor-not-allowed'
-                          : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500/50 hover:bg-blue-50/30 dark:hover:bg-slate-800/80 active:scale-[0.98] shadow-2xs cursor-pointer'
+                          ? 'bg-slate-50 dark:bg-[#070B16]/50 border-[#E2E8F0] dark:border-[#263954] opacity-55 cursor-not-allowed'
+                          : 'bg-white dark:bg-[#111D30] border-[#E2E8F0] dark:border-[#263954] hover:border-[#0866E9] dark:hover:border-[#FF7900] active:scale-[0.98] shadow-2xs cursor-pointer'
                       }`}
                     >
                       <div className="min-w-0">
-                        <div className="flex items-center justify-between gap-1 mb-1">
-                          <span className="text-[9px] font-mono text-slate-400 truncate">
+                        <div className="flex items-center justify-between gap-1 mb-0.5 text-[10.5px]">
+                          <span className="font-mono text-[#64748B] dark:text-[#94A3B8] truncate">
                             {p.sku}
                           </span>
                           <span
-                            className={`text-[9px] font-medium px-1.5 py-0.5 rounded ${
+                            className={
                               isOutOfStock
-                                ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
-                                : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400'
-                            }`}
+                                ? 'text-rose-600 dark:text-rose-400 font-medium'
+                                : 'text-emerald-600 dark:text-emerald-400 font-medium tabular-nums'
+                            }
                           >
                             {isOutOfStock ? 'Habis' : `Stok ${p.openingStock}`}
                           </span>
                         </div>
-                        <h3 className="text-xs font-medium text-slate-800 dark:text-slate-100 leading-snug line-clamp-2">
+                        <h3 className="text-[12.5px] font-medium text-[#172033] dark:text-white leading-snug line-clamp-2">
                           {p.name}
                         </h3>
                       </div>
 
-                      <div className="flex items-center justify-between pt-1.5 border-t border-slate-100 dark:border-slate-800">
-                        <span className="text-xs font-semibold text-[#0866E9] dark:text-blue-400 tabular-nums">
+                      <div className="flex items-center justify-between pt-1.5 border-t border-[#E2E8F0] dark:border-[#263954]">
+                        <span className="text-[12.5px] font-semibold text-[#0866E9] dark:text-[#FF7900] tabular-nums">
                           {formatRupiah(p.sellingPrice)}
                         </span>
-                        <span className="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#0866E9] dark:text-blue-400 flex items-center justify-center">
+                        <span className="w-6 h-6 rounded-md bg-[#F1F4F8] dark:bg-[#070B16] text-[#0866E9] dark:text-[#FF7900] flex items-center justify-center">
                           <Plus size={13} strokeWidth={2.5} />
                         </span>
                       </div>
@@ -418,70 +444,101 @@ export const KasirPage = () => {
         </div>
       </div>
 
-      {/* Kolom Kanan (Tablet/PC: Keranjang Belanja + Tombol Bayar Permanen; Mobile: Flex-1 Bawah) */}
-      <div className="flex-1 min-h-0 flex flex-col gap-2 md:col-span-5 md:h-full md:overflow-hidden">
-        {/* 2. Kartu Ringkas Belanja */}
-        <div className="flex-1 min-h-0 bg-white dark:bg-slate-900 rounded-xl md:rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs flex flex-col overflow-hidden transition-colors">
-          {/* Header Bar Ringkasan */}
-          <div className="px-3 py-2 md:px-3.5 md:py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/70 dark:bg-slate-800/50 shrink-0">
-            <h2 className="text-[10.5px] md:text-xs font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-tight">
-              RINGKASAN BELANJA
-            </h2>
-            <span className="bg-blue-50 dark:bg-blue-950/60 text-[#0866E9] dark:text-blue-400 border border-blue-200/70 dark:border-blue-800/70 px-2.5 py-0.5 rounded-full text-[9px] md:text-[10px] font-semibold tracking-wide tabular-nums">
-              {cart.reduce((sum, item) => sum + item.quantity, 0)} ITEM
+      {/* Kolom Kanan (Tablet/PC: Keranjang Belanja + Ringkasan Bayar; Mobile: Flex-1 Bawah) */}
+      <div className="flex-1 min-h-0 min-w-0 flex flex-col gap-2 md:col-span-5 md:h-full md:overflow-hidden">
+        {/* 3. Daftar Keranjang */}
+        <div className="flex-1 min-h-0 bg-white dark:bg-[#111D30] rounded-xl border border-[#E2E8F0] dark:border-[#263954] shadow-2xs flex flex-col overflow-hidden transition-colors">
+          {/* Header Keranjang + Indikator Mode Kasir */}
+          <div className="px-3 py-2 border-b border-[#E2E8F0] dark:border-[#263954] flex justify-between items-center gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <h2 className="text-[13.5px] font-semibold text-[#172033] dark:text-white tracking-tight truncate">
+                Keranjang
+              </h2>
+              <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] tabular-nums whitespace-nowrap">
+                · {totalItems} item
+              </span>
+            </div>
+
+            <span
+              data-testid="kasir-mode-indicator"
+              className="text-[11px] font-medium text-[#0866E9] dark:text-[#FF7900] whitespace-nowrap shrink-0"
+            >
+              Mode: {mode === 'pro' ? 'Pro' : 'Lite'}
             </span>
           </div>
 
-          {/* Area Daftar Barang Masuk (Tersusun Vertikal ke Bawah) */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-2 md:p-2.5 flex flex-col gap-1.5 custom-scrollbar">
+          {/* Daftar Barang dalam Keranjang */}
+          <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-[#E2E8F0] dark:divide-[#263954]">
             {cart.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center gap-1.5 opacity-40 py-8">
-                <ShoppingCart className="w-8 h-8 text-slate-300 dark:text-slate-600" strokeWidth={1.8} />
-                <p className="text-[9.5px] font-medium uppercase tracking-wider text-slate-400">
-                  Keranjang Masih Kosong
+              <div className="h-full flex flex-col items-center justify-center gap-1.5 px-4 py-6 text-center">
+                <ShoppingCart
+                  className="w-8 h-8 text-slate-300 dark:text-slate-600"
+                  strokeWidth={1.6}
+                />
+                <p className="text-[12.5px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+                  Belum ada barang di keranjang
                 </p>
               </div>
             ) : (
               cart.map(item => (
                 <div
                   key={item.productId}
-                  className="flex justify-between items-center p-2 rounded-xl bg-slate-50/80 dark:bg-slate-800/70 border border-slate-200/90 dark:border-slate-700/80 shadow-2xs"
+                  className="px-2.5 py-2 flex flex-col gap-1.5 bg-white dark:bg-[#111D30] transition-colors"
                 >
-                  <div className="flex flex-col min-w-0 pr-2">
-                    <h4 className="font-medium text-xs text-slate-900 dark:text-slate-100 leading-tight truncate">
-                      {item.productName}
-                    </h4>
-                    <span className="text-[9.5px] text-slate-400 font-medium tabular-nums mt-0.5">
-                      {formatRupiah(item.unitPrice)}
-                    </span>
+                  {/* Baris Atas: Nama Barang, Harga Satuan, & Tombol Hapus */}
+                  <div className="flex items-start justify-between gap-2 min-w-0">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-medium text-[12.5px] text-[#172033] dark:text-white leading-tight line-clamp-1">
+                        {item.productName}
+                      </h4>
+                      <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] font-normal tabular-nums mt-0.5 leading-tight">
+                        {formatRupiah(item.unitPrice)}
+                        {item.unit ? ` / ${item.unit}` : ''}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => removeFromCart(item.productId)}
+                      aria-label={`Hapus ${item.productName}`}
+                      title={`Hapus ${item.productName}`}
+                      className="min-w-[44px] min-h-[44px] w-11 h-11 -mr-1.5 -my-1.5 rounded-xl flex items-center justify-center text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 active:scale-95 transition-colors cursor-pointer shrink-0"
+                    >
+                      <Trash2 className="w-[16px] h-[16px]" />
+                    </button>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
+
+                  {/* Baris Bawah: Stepper Minus/Plus (min 44px) & Total Harga per Item */}
+                  <div className="flex items-center justify-between gap-2 min-w-0">
+                    <div className="flex items-center bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl shrink-0">
                       <button
+                        type="button"
                         onClick={() => decreaseQuantity(item.productId)}
-                        className="w-5 h-5 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-90 font-bold cursor-pointer"
+                        aria-label={`Kurangi jumlah ${item.productName}`}
+                        className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-l-xl flex items-center justify-center text-[#172033] dark:text-white hover:bg-white dark:hover:bg-[#111D30] active:scale-95 transition-all cursor-pointer"
                       >
-                        <Minus size={10} strokeWidth={3} />
+                        <Minus size={15} strokeWidth={2.5} />
                       </button>
-                      <span className="font-semibold text-xs px-1.5 tabular-nums text-slate-900 dark:text-slate-100">
+
+                      <span className="min-w-[28px] text-center font-semibold text-[12.5px] px-1 tabular-nums text-[#172033] dark:text-white">
                         {item.quantity}
                       </span>
+
                       <button
+                        type="button"
                         onClick={() => increaseQuantity(item.productId)}
-                        className="w-5 h-5 flex items-center justify-center text-[#0866E9] dark:text-blue-400 active:scale-90 font-bold cursor-pointer"
+                        aria-label={`Tambah jumlah ${item.productName}`}
+                        className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-r-xl flex items-center justify-center text-[#0866E9] dark:text-[#FF7900] hover:bg-white dark:hover:bg-[#111D30] active:scale-95 transition-all cursor-pointer"
                       >
-                        <Plus size={10} strokeWidth={3} />
+                        <Plus size={15} strokeWidth={2.5} />
                       </button>
                     </div>
-                    <span className="font-semibold text-xs text-slate-900 dark:text-slate-100 tabular-nums min-w-[60px] text-right">
-                      {formatRupiah(item.lineSubtotal)}
-                    </span>
-                    <button
-                      onClick={() => removeFromCart(item.productId)}
-                      className="text-rose-500 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 p-1 rounded-md transition-colors cursor-pointer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+
+                    <div className="text-right min-w-0">
+                      <span className="block font-semibold text-[13px] text-[#172033] dark:text-white tabular-nums whitespace-nowrap">
+                        {formatRupiah(item.lineSubtotal)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))
@@ -489,44 +546,45 @@ export const KasirPage = () => {
           </div>
         </div>
 
-        {/* 3. Footer Pembayaran Terkunci di Bawah */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-xl md:rounded-2xl p-2.5 md:p-3.5 shadow-xs flex flex-col gap-2 shrink-0 transition-colors">
-          <div className="flex justify-between items-center px-1">
-            <span className="text-[9.5px] md:text-[10px] text-slate-400 font-medium uppercase tracking-wider">
-              TOTAL BELANJA
+        {/* 4. Ringkasan dan Pembayaran */}
+        <div className="bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-2.5 sm:p-3 shadow-2xs flex flex-col gap-2 shrink-0 transition-colors">
+          <div className="flex justify-between items-baseline gap-2 px-0.5">
+            <span className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+              Total Belanja
             </span>
-            <span className="text-base md:text-lg font-bold text-slate-900 dark:text-slate-100 leading-none tracking-tight tabular-nums">
-              {formatRupiah(getCartSubtotal())}
+            <span className="text-[20px] sm:text-[21px] font-bold text-[#172033] dark:text-white leading-none tracking-tight tabular-nums">
+              {formatRupiah(cartSubtotal)}
             </span>
           </div>
 
           <button
+            type="button"
             onClick={handleCheckoutClick}
             disabled={cart.length === 0}
-            className="w-full py-2.5 md:py-3 rounded-full bg-[#FF7900] hover:bg-orange-500 shadow-sm shadow-orange-500/20 text-black font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-1.5 active:scale-98 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full min-h-[44px] h-11 px-4 rounded-xl bg-[#0866E9] hover:bg-[#0758CC] text-white font-semibold text-[12.5px] flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] transition-all disabled:opacity-45 disabled:cursor-not-allowed cursor-pointer"
           >
-            <span>BAYAR SEKARANG</span>
-            <ArrowRight className="w-3.5 h-3.5 text-black" strokeWidth={3} />
+            <Wallet className="w-[17px] h-[17px] shrink-0" />
+            <span>Bayar Sekarang</span>
           </button>
         </div>
       </div>
 
       {/* Overlay / Kartu Inline Buka Kasir Hari Ini (Otomatis Muncul Bila Shift Belum Buka / Hari Baru) */}
       {needsOpenShift && (
-        <div className="absolute inset-0 z-40 flex items-center justify-center bg-slate-900/45 dark:bg-black/70 backdrop-blur-xs p-3 md:p-4">
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-slate-900/45 dark:bg-black/70 backdrop-blur-xs p-3">
           <form
             onSubmit={handleOpenTodayShift}
-            className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col gap-3"
+            className="w-full max-w-sm bg-white dark:bg-[#111D30] rounded-2xl p-3.5 shadow-2xl border border-[#E2E8F0] dark:border-[#263954] flex flex-col gap-2.5"
           >
-            <div className="flex items-center gap-2.5 border-b border-slate-100 dark:border-slate-800 pb-2.5">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#0866E9] dark:text-blue-400 border border-blue-200 dark:border-blue-800/70 flex items-center justify-center shrink-0">
-                <Unlock size={18} />
+            <div className="flex items-center gap-2.5 border-b border-[#E2E8F0] dark:border-[#263954] pb-2">
+              <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-[#0866E9]/15 text-[#0866E9] dark:text-[#FF7900] border border-[#E2E8F0] dark:border-[#263954] flex items-center justify-center shrink-0">
+                <Unlock size={16} />
               </div>
               <div className="min-w-0">
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">
+                <h3 className="text-[13.5px] font-semibold text-[#172033] dark:text-white leading-tight">
                   Buka Kasir Hari Ini
                 </h3>
-                <p className="text-[10.5px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] mt-0.5 leading-snug">
                   {shiftQuery.shift
                     ? 'Pergantian hari terdeteksi. Buka kasir baru untuk transaksi hari ini.'
                     : 'Masukkan nominal modal awal laci untuk mulai melayani transaksi.'}
@@ -535,12 +593,12 @@ export const KasirPage = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+              <label className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8] block">
                 Nominal Modal Awal Laci (Rp)
               </label>
-              <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 focus-within:bg-white dark:focus-within:bg-slate-900 focus-within:border-blue-400 dark:focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/15 transition-all">
-                <Banknote className="w-4 h-4 text-[#0866E9] dark:text-blue-400 shrink-0" />
-                <span className="text-xs font-medium text-slate-400">Rp</span>
+              <div className="min-h-[40px] h-10 flex items-center gap-2 bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl px-2.5 py-1.5 focus-within:border-[#0866E9] dark:focus-within:border-[#FF7900] transition-all">
+                <Banknote className="w-4 h-4 text-[#0866E9] dark:text-[#FF7900] shrink-0" />
+                <span className="text-xs font-medium text-[#64748B] dark:text-[#94A3B8]">Rp</span>
                 <input
                   type="number"
                   min={0}
@@ -551,7 +609,7 @@ export const KasirPage = () => {
                     setInitialCashInput(e.target.value);
                   }}
                   placeholder="200000"
-                  className="w-full bg-transparent text-sm font-bold text-slate-900 dark:text-slate-100 outline-none tabular-nums"
+                  className="w-full bg-transparent text-[13px] font-semibold text-[#172033] dark:text-white outline-none tabular-nums"
                   autoFocus
                 />
               </div>
@@ -573,10 +631,10 @@ export const KasirPage = () => {
                         setShiftError(null);
                         setInitialCashInput(preset.value);
                       }}
-                      className={`py-1.5 px-2 rounded-lg border text-[10.5px] font-medium tabular-nums transition-all active:scale-95 cursor-pointer ${
+                      className={`min-h-[44px] py-1.5 px-2 rounded-xl border text-[11px] font-medium tabular-nums transition-all active:scale-95 cursor-pointer ${
                         isSelected
-                          ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-500 text-[#0866E9] dark:text-blue-400 shadow-2xs'
-                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-blue-300 dark:hover:border-blue-500/50'
+                          ? 'bg-blue-50 dark:bg-[#FF7900]/15 border-[#0866E9] dark:border-[#FF7900] text-[#0866E9] dark:text-[#FF7900]'
+                          : 'bg-white dark:bg-[#070B16] border-[#E2E8F0] dark:border-[#263954] text-[#172033] dark:text-slate-300 hover:border-[#0866E9] dark:hover:border-[#FF7900]'
                       }`}
                     >
                       {preset.label}
@@ -587,7 +645,7 @@ export const KasirPage = () => {
             </div>
 
             {shiftError && (
-              <p className="text-[11px] font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/70 rounded-xl px-3 py-1.5">
+              <p className="text-[11px] font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/70 rounded-xl px-2.5 py-1.5">
                 {shiftError}
               </p>
             )}
@@ -595,9 +653,9 @@ export const KasirPage = () => {
             <button
               type="submit"
               disabled={isOpeningShift}
-              className="w-full py-2.5 px-4 rounded-xl bg-[#0866E9] hover:bg-blue-600 text-white text-xs font-semibold uppercase tracking-wider shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 cursor-pointer"
+              className="w-full min-h-[44px] py-2 px-4 rounded-xl bg-[#0866E9] hover:bg-[#0758CC] text-white text-[12.5px] font-semibold shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
             >
-              <Unlock size={14} />
+              <Unlock size={15} />
               <span>{isOpeningShift ? 'Membuka Kasir...' : 'Mulai Buka Kasir'}</span>
             </button>
           </form>

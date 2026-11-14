@@ -163,39 +163,39 @@ export const PaymentModal = ({ onClose, onSuccess }: PaymentModalProps) => {
   const qrisImage = storeSettings?.qrisImage?.trim() || '';
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-      <div className="bg-[var(--bg-surface)] p-5 rounded-2xl w-full max-w-sm max-h-[90vh] overflow-y-auto shadow-2xl border border-[var(--border-app)]">
-        <h2 className="text-base font-bold mb-3 tracking-tight text-[var(--text-main)]">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 z-50 animate-in fade-in duration-200">
+      <div className="bg-white dark:bg-[#111D30] p-3.5 rounded-2xl w-full max-w-sm max-h-[90vh] overflow-y-auto shadow-2xl border border-[#E2E8F0] dark:border-[#263954] text-[#172033] dark:text-white">
+        <h2 className="text-[16px] font-semibold mb-2.5 tracking-tight text-[#172033] dark:text-white leading-tight">
           Review Pembayaran
         </h2>
 
-        <div className="mb-3 space-y-1.5 border-b border-[var(--border-app)] pb-3">
+        <div className="mb-2.5 space-y-1 border-b border-[#E2E8F0] dark:border-[#263954] pb-2.5">
           {cart.map((item, idx) => (
-            <div key={item.productId} className="flex justify-between text-[12px] leading-tight gap-2">
-              <span className="text-[var(--text-muted)] truncate">
+            <div key={item.productId} className="flex justify-between text-[12px] leading-snug gap-2">
+              <span className="text-[#64748B] dark:text-[#94A3B8] truncate">
                 {idx + 1}. {item.productName} (x{item.quantity})
               </span>
-              <span className="font-medium text-[var(--text-main)] tabular-nums whitespace-nowrap">
+              <span className="font-medium text-[#172033] dark:text-white tabular-nums whitespace-nowrap">
                 {formatRupiah(item.lineSubtotal)}
               </span>
             </div>
           ))}
-          <div className="flex justify-between items-center pt-2">
-            <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase">TOTAL</span>
-            <span className="text-lg font-extrabold text-[var(--primary-accent)] tabular-nums">
+          <div className="flex justify-between items-center pt-1.5">
+            <span className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8]">Total Bayar</span>
+            <span className="text-[20px] font-bold text-[#0866E9] dark:text-[#FF7900] tabular-nums leading-tight">
               {formatRupiah(total)}
             </span>
           </div>
         </div>
 
-        <div className="mb-3">
-          <p className="text-[10px] font-medium text-[var(--text-muted)] mb-1.5 uppercase tracking-wider">
+        <div className="mb-2.5">
+          <p className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8] mb-1">
             Metode Pembayaran
           </p>
           <select
             value={method}
             onChange={(e) => setMethod(e.target.value as PaymentMethod)}
-            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-100 outline-none focus:border-[#0866E9]"
+            className="w-full min-h-[44px] h-11 px-3 rounded-xl border border-[#E2E8F0] dark:border-[#263954] bg-[#F1F4F8] dark:bg-[#070B16] text-[12.5px] font-medium text-[#172033] dark:text-white outline-none focus:border-[#0866E9] dark:focus:border-[#FF7900]"
           >
             <option value="tunai">Tunai</option>
             <option value="qris">QRIS</option>
@@ -205,27 +205,27 @@ export const PaymentModal = ({ onClose, onSuccess }: PaymentModalProps) => {
         </div>
 
         {method === 'tunai' && (
-          <div className="space-y-3 animate-in slide-in-from-top-2 duration-300">
+          <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
             <div>
-              <p className="text-[10px] font-medium text-[var(--text-muted)] mb-1 uppercase tracking-wider">
+              <p className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8] mb-1">
                 Uang Diterima
               </p>
               <input
                 type="number"
-                className="w-full h-11 px-4 text-lg font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-[#0866E9] tabular-nums"
+                className="w-full min-h-[40px] h-10 px-3 text-[16px] font-semibold bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl text-[#172033] dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-[#0866E9] dark:focus:border-[#FF7900] tabular-nums"
                 placeholder="0"
                 value={received || ''}
                 onChange={(e) => setReceived(Number(e.target.value))}
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1.5">
               {[10000, 20000, 50000, 100000].map((amt) => (
                 <button
                   key={amt}
                   type="button"
                   onClick={() => setReceived(amt)}
-                  className="h-9 rounded-lg bg-[var(--bg-subtle)] border border-[var(--border-app)] text-[11px] font-bold text-[var(--text-main)] hover:opacity-80 active:scale-95 transition-all cursor-pointer tabular-nums"
+                  className="min-h-[44px] rounded-xl bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] text-xs font-medium text-[#172033] dark:text-white hover:border-[#0866E9] dark:hover:border-[#FF7900] active:scale-95 transition-all cursor-pointer tabular-nums"
                 >
                   {amt.toLocaleString('id-ID')}
                 </button>
@@ -233,24 +233,24 @@ export const PaymentModal = ({ onClose, onSuccess }: PaymentModalProps) => {
               <button
                 type="button"
                 onClick={() => setReceived(total)}
-                className="h-9 rounded-lg bg-[var(--primary-accent)]/10 text-[var(--primary-accent)] border border-[var(--primary-accent)]/20 text-[11px] font-bold active:scale-95 transition-all col-span-2 cursor-pointer"
+                className="min-h-[44px] rounded-xl bg-[#0866E9]/10 dark:bg-[#FF7900]/15 text-[#0866E9] dark:text-[#FF7900] border border-[#0866E9]/30 dark:border-[#FF7900]/40 text-xs font-semibold active:scale-95 transition-all col-span-2 cursor-pointer"
               >
                 Uang Pas
               </button>
             </div>
 
-            <div className="p-3 bg-[var(--bg-subtle)]/50 rounded-xl border border-[var(--border-app)] flex justify-between items-center">
-              <span className="text-xs font-medium text-[var(--text-muted)]">Kembalian</span>
+            <div className="p-2.5 bg-[#F1F4F8] dark:bg-[#070B16] rounded-xl border border-[#E2E8F0] dark:border-[#263954] flex justify-between items-center">
+              <span className="text-[11px] font-medium text-[#64748B] dark:text-[#94A3B8]">Kembalian</span>
               <span
-                className={`text-sm font-bold tabular-nums ${
-                  change >= 0 ? 'text-green-600' : 'text-red-500'
+                className={`text-[14px] font-semibold tabular-nums ${
+                  change >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'
                 }`}
               >
                 {formatRupiah(change)}
               </span>
             </div>
             {shortage > 0 && (
-              <p className="text-[11px] text-center text-red-500 font-medium italic tabular-nums">
+              <p className="text-[11px] text-center text-red-500 dark:text-red-400 font-medium tabular-nums">
                 Kurang {formatRupiah(shortage)} lagi
               </p>
             )}
@@ -259,38 +259,38 @@ export const PaymentModal = ({ onClose, onSuccess }: PaymentModalProps) => {
 
         {/* Tampilan QRIS Toko Otomatis */}
         {method === 'qris' && (
-          <div className="bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 flex flex-col items-center text-center gap-2">
-            <div className="flex items-center gap-1 text-[10px] font-semibold text-[#0866E9] dark:text-blue-400 uppercase tracking-wider">
-              <QrCode size={13} />
-              <span>PEMBAYARAN QRIS</span>
+          <div className="bg-[#F1F4F8] dark:bg-[#070B16] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-3 flex flex-col items-center text-center gap-1.5">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#0866E9] dark:text-[#FF7900]">
+              <QrCode size={14} />
+              <span>Pembayaran QRIS</span>
             </div>
 
             <div className="space-y-0.5">
-              <p className="text-xs font-semibold text-slate-900 dark:text-slate-100 uppercase leading-tight">
+              <p className="text-[12.5px] font-semibold text-[#172033] dark:text-white leading-tight">
                 {storeName}
               </p>
-              <p className="text-[10px] font-mono text-slate-500 dark:text-slate-400">{qrisMerchantName}</p>
+              <p className="text-[11px] font-mono text-[#64748B] dark:text-[#94A3B8]">{qrisMerchantName}</p>
             </div>
 
             {qrisImage ? (
               <>
-                <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
+                <div className="bg-white p-1.5 rounded-xl border border-[#E2E8F0] shadow-2xs">
                   <img
                     src={qrisImage}
                     alt={`QRIS ${storeName}`}
-                    className="w-44 h-44 object-contain"
+                    className="w-40 h-40 object-contain"
                   />
                 </div>
-                <p className="text-[11px] font-semibold text-[#0866E9] dark:text-blue-400 tabular-nums">
+                <p className="text-[12.5px] font-semibold text-[#0866E9] dark:text-[#FF7900] tabular-nums">
                   Nominal Bayar: {formatRupiah(total)}
                 </p>
               </>
             ) : (
               <>
-                <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
+                <div className="bg-white p-1.5 rounded-xl border border-[#E2E8F0] shadow-2xs">
                   <DynamicQrFallback payload={`QRIS:${storeName}:${total}`} />
                 </div>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+                <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] leading-tight">
                   QR dinamis otomatis (gambar QRIS toko belum diunggah)
                 </p>
                 <button
@@ -299,9 +299,9 @@ export const PaymentModal = ({ onClose, onSuccess }: PaymentModalProps) => {
                     onClose();
                     navigate('/settings');
                   }}
-                  className="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-[#0866E9] dark:text-blue-400 border border-blue-200 dark:border-blue-800/70 text-[10.5px] font-medium flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+                  className="min-h-[44px] px-3 py-1.5 rounded-xl bg-white dark:bg-[#111D30] hover:border-[#0866E9] dark:hover:border-[#FF7900] text-[#0866E9] dark:text-[#FF7900] border border-[#E2E8F0] dark:border-[#263954] text-xs font-medium flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
                 >
-                  <Settings size={12} />
+                  <Settings size={14} />
                   <span>Atur QRIS Toko</span>
                 </button>
               </>
@@ -310,18 +310,18 @@ export const PaymentModal = ({ onClose, onSuccess }: PaymentModalProps) => {
         )}
 
         {errorMsg && (
-          <div className="mt-3 flex items-center gap-2 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/70 text-rose-700 dark:text-rose-400 text-xs px-3 py-2 rounded-xl">
+          <div className="mt-2.5 flex items-center gap-2 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/70 text-rose-700 dark:text-rose-400 text-[11.5px] px-3 py-2 rounded-xl">
             <AlertCircle size={14} className="shrink-0" />
             <span>{errorMsg}</span>
           </div>
         )}
 
-        <div className="mt-5 space-y-2">
+        <div className="mt-3.5 space-y-1.5">
           <button
             type="button"
             onClick={handleConfirm}
             disabled={isProcessing || (method === 'tunai' && !isValid)}
-            className="w-full h-11 bg-[var(--primary-accent)] disabled:bg-[var(--bg-subtle)] disabled:text-[var(--text-muted)] text-white rounded-xl font-bold text-sm shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full min-h-[44px] bg-[#0866E9] hover:bg-[#0758CC] disabled:bg-slate-200 dark:disabled:bg-[#263954] disabled:text-slate-400 dark:disabled:text-slate-500 text-white rounded-xl font-semibold text-[12.5px] shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             {isProcessing ? 'Memproses...' : 'Konfirmasi Pembayaran'}
           </button>
@@ -329,7 +329,7 @@ export const PaymentModal = ({ onClose, onSuccess }: PaymentModalProps) => {
             type="button"
             onClick={onClose}
             disabled={isProcessing}
-            className="w-full h-9 text-[var(--text-muted)] text-xs font-bold hover:text-[var(--text-main)] transition-colors cursor-pointer"
+            className="w-full min-h-[44px] text-slate-500 dark:text-slate-400 text-xs font-medium hover:text-[#172033] dark:hover:text-white transition-colors cursor-pointer"
           >
             Batalkan
           </button>

@@ -78,86 +78,101 @@ export const BackupPage: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col justify-between p-2.5 overflow-hidden select-none bg-slate-50 dark:bg-slate-950 gap-2 transition-colors duration-200">
-      {/* 1. Header dengan Tombol Kembali ke Menu */}
-      <div className="flex items-center justify-between pt-0.5 shrink-0">
-        <div className="flex items-center gap-2">
-          <button 
-            onClick={() => navigate('/menu')}
-            className="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:text-[#0866E9] dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-500/50 active:scale-95 transition-all cursor-pointer"
-            title="Kembali ke Menu"
-          >
-            <ArrowLeft size={16} strokeWidth={2.5} />
-          </button>
-          <div>
-            <h1 className="text-xs font-black text-slate-900 dark:text-slate-100 tracking-tight leading-none">Backup & Restore</h1>
-            <p className="text-[8.5px] text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider mt-0.5">Keamanan Database</p>
+    <div className="h-full overflow-y-auto px-3 pt-2.5 pb-4 bg-[#F1F4F8] dark:bg-[#070B16] text-[#172033] dark:text-white select-none transition-colors duration-200 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div className="max-w-2xl mx-auto w-full flex flex-col gap-2.5">
+        {/* 1. Header dengan Tombol Kembali ke Menu */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <button
+              type="button"
+              onClick={() => navigate('/menu')}
+              className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] shadow-2xs flex items-center justify-center text-[#172033] dark:text-white hover:border-[#0866E9] dark:hover:border-[#FF7900] active:scale-95 transition-all cursor-pointer shrink-0"
+              title="Kembali ke Menu"
+              aria-label="Kembali ke Menu"
+            >
+              <ArrowLeft size={17} strokeWidth={2.25} />
+            </button>
+            <div className="min-w-0">
+              <h1 className="text-[17px] font-semibold text-[#172033] dark:text-white tracking-tight leading-tight">
+                Backup & Restore
+              </h1>
+              <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] font-normal mt-0.5 leading-tight">
+                Keamanan database lokal
+              </p>
+            </div>
           </div>
+
+          {toastMsg && (
+            <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/70 px-2.5 py-1 rounded-xl shrink-0">
+              <CheckCircle2 size={13} /> {toastMsg}
+            </span>
+          )}
         </div>
 
-        {toastMsg && (
-          <span className="flex items-center gap-1 text-[9.5px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/70 px-2 py-0.5 rounded-full animate-fade-in">
-            <CheckCircle2 size={11} /> {toastMsg}
-          </span>
-        )}
-      </div>
-
-      <div className="flex-1 flex flex-col gap-2 overflow-y-auto pr-0.5 custom-scrollbar">
         {/* Banner Info */}
-        <div className="bg-gradient-to-r from-blue-600 to-[#0866E9] rounded-2xl p-3 text-white shadow-xs border border-white/20 shrink-0">
-          <div className="flex items-center gap-2 mb-1">
-            <ShieldCheck className="w-4 h-4 text-emerald-300" />
-            <h3 className="text-xs font-black tracking-tight">Database Offline Aman</h3>
+        <div className="bg-gradient-to-r from-[#0866E9] to-[#024BB5] rounded-xl p-3 text-white shadow-2xs border border-[#0866E9]/20">
+          <div className="flex items-center gap-1.5 mb-1">
+            <ShieldCheck className="w-4 h-4 text-emerald-300 shrink-0" />
+            <h2 className="text-[13.5px] font-semibold tracking-tight leading-tight">Database Offline Aman</h2>
           </div>
-          <p className="text-[9.5px] text-blue-100 leading-snug">
+          <p className="text-[12px] text-blue-100 font-normal leading-snug">
             Data tersimpan di penyimpanan internal peramban. Lakukan cadangan rutin ke file JSON agar aman saat berganti perangkat.
           </p>
         </div>
 
         {/* Cadangkan Data */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-3 shadow-2xs flex flex-col gap-2 shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-[#0866E9] dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/70">
-              <Download size={14} strokeWidth={2.5} />
+        <div className="bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-3 shadow-2xs flex flex-col gap-2.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-[#0866E9]/15 flex items-center justify-center text-[#0866E9] dark:text-blue-400 border border-blue-200/70 dark:border-[#0866E9]/40 shrink-0">
+              <Download size={16} strokeWidth={2.25} />
             </div>
             <div>
-              <h4 className="text-[11px] font-black text-slate-900 dark:text-slate-100 leading-none">Cadangkan Data (Backup)</h4>
-              <p className="text-[8.5px] text-slate-400 dark:text-slate-400 font-medium mt-0.5">Unduh seluruh file database ke HP</p>
+              <h3 className="text-[13.5px] font-semibold text-[#172033] dark:text-white leading-tight">
+                Cadangkan Data (Backup)
+              </h3>
+              <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] font-normal mt-0.5 leading-tight">
+                Unduh seluruh file database ke perangkat
+              </p>
             </div>
           </div>
           <button
+            type="button"
             onClick={handleBackup}
             disabled={loading}
-            className="w-full py-2 bg-[#0866E9] hover:bg-blue-600 text-white font-black text-xs rounded-xl shadow-xs shadow-blue-500/20 flex items-center justify-center gap-1.5 active:scale-98 transition-all tracking-wider uppercase cursor-pointer"
+            className="w-full min-h-[44px] py-2 bg-[#0866E9] hover:bg-[#0758CC] text-white font-semibold text-[12.5px] rounded-xl shadow-2xs flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-45"
           >
-            <Download size={13} />
+            <Download size={15} />
             <span>{loading ? 'Memproses...' : 'Unduh File Database'}</span>
           </button>
         </div>
 
         {/* Pulihkan Data */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-3 shadow-2xs flex flex-col gap-2 shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/60 flex items-center justify-center text-[#FF7900] dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/70">
-              <Upload size={14} strokeWidth={2.5} />
+        <div className="bg-white dark:bg-[#111D30] border border-[#E2E8F0] dark:border-[#263954] rounded-xl p-3 shadow-2xs flex flex-col gap-2.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-orange-50 dark:bg-[#FF7900]/15 flex items-center justify-center text-[#FF7900] border border-orange-200/70 dark:border-[#FF7900]/40 shrink-0">
+              <Upload size={16} strokeWidth={2.25} />
             </div>
             <div>
-              <h4 className="text-[11px] font-black text-slate-900 dark:text-slate-100 leading-none">Pulihkan Data (Restore)</h4>
-              <p className="text-[8.5px] text-slate-400 dark:text-slate-400 font-medium mt-0.5">Muat kembali cadangan dari file JSON</p>
+              <h3 className="text-[13.5px] font-semibold text-[#172033] dark:text-white leading-tight">
+                Pulihkan Data (Restore)
+              </h3>
+              <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] font-normal mt-0.5 leading-tight">
+                Muat kembali cadangan dari file JSON
+              </p>
             </div>
           </div>
 
-          <label className="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-black text-xs rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5 active:scale-98 transition-all tracking-wider uppercase cursor-pointer">
-            <FileCode2 size={13} className="text-[#0866E9] dark:text-blue-400" />
+          <label className="w-full min-h-[44px] py-2 bg-[#F1F4F8] dark:bg-[#070B16] hover:border-[#0866E9] dark:hover:border-[#FF7900] text-[#172033] dark:text-white font-semibold text-[12.5px] rounded-xl border border-[#E2E8F0] dark:border-[#263954] flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer">
+            <FileCode2 size={15} className="text-[#0866E9] dark:text-[#FF7900]" />
             <span>Pilih File .JSON Cadangan</span>
             <input type="file" accept=".json" onChange={handleRestore} className="hidden" />
           </label>
         </div>
 
         {/* Kotak Peringatan */}
-        <div className="bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/70 rounded-xl p-2.5 flex items-start gap-2 shrink-0">
-          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-          <p className="text-[9px] text-amber-800 dark:text-amber-300 font-medium leading-tight">
+        <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/70 rounded-xl p-2.5 flex items-start gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-[#FF7900] shrink-0 mt-0.5" />
+          <p className="text-[11px] text-amber-800 dark:text-amber-300 font-normal leading-snug">
             Memulihkan file akan menimpa stok dan transaksi yang ada saat ini. Pastikan memilih file backup yang sesuai.
           </p>
         </div>

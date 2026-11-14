@@ -8,8 +8,8 @@ export const OfflineIndicator: React.FC = () => {
   if (isOnline) return null;
 
   return (
-    <div className="fixed top-2 right-2 z-50 flex items-center gap-1.5 rounded-full bg-amber-500 px-2.5 py-1 text-[10px] font-medium text-white shadow-md">
-      <WifiOff className="w-3 h-3 shrink-0" />
+    <div className="fixed top-2 right-2 z-50 flex items-center gap-1.5 rounded-full bg-amber-500 border border-amber-600/40 px-3 py-1 text-[11px] font-medium text-white shadow-md">
+      <WifiOff className="w-3.5 h-3.5 shrink-0" />
       <span>Mode Offline — Data Lokal Aktif</span>
     </div>
   );
