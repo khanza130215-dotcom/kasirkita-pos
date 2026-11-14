@@ -14,6 +14,7 @@ import { ShiftPage } from './pages/ShiftPage';
 import { TransactionHistoryPage } from './pages/TransactionHistoryPage';
 import { BackupPage } from './pages/BackupPage';
 import { AboutPage } from './pages/AboutPage';
+import { GuideInfoPage } from './pages/GuideInfoPage';
 import { seedInitialData } from './db/seedData';
 import { OfflineIndicator } from './components/ui/OfflineIndicator';
 
@@ -47,6 +48,7 @@ export function App() {
                 <Route path="/shift" element={<ShiftPage />} />
                 <Route path="/transactions" element={<TransactionHistoryPage />} />
                 <Route path="/backup" element={<BackupPage />} />
+                <Route path="/guide" element={<GuideInfoPage />} />
                 <Route path="/about" element={<AboutPage />} />
 
                 {/* Fallback jika rute tidak ditemukan */}
